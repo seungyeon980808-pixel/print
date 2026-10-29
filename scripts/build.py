@@ -31,6 +31,13 @@ def typst(src, dst, *extra):
     print("만듦:", dst)
 
 typst("책.typ", os.path.join(out, name + ".pdf"))
+try:   # 칸에 안 들어가 줄인 문항이 있으면 쪽 번호를 알려 준다(최종본에 남기지 말 것)
+    import pymupdf
+    bad = [i + 1 for i, pg in enumerate(pymupdf.open(os.path.join(out, name + ".pdf"))) if "칸 넘침" in pg.get_text()]
+    if bad:
+        print(f"주의: 칸 넘침 {len(bad)}쪽 — PDF 쪽 {', '.join(map(str, bad))}. 그림을 줄이거나 문항을 다른 칸으로 옮기세요.", file=sys.stderr)
+except ImportError:
+    pass
 if a.parts:
     for d in sorted(glob.glob(os.path.join(root, "파트*")), key=lambda p: int("".join(c for c in os.path.basename(p) if c.isdigit()) or 0)):
         for f in ("개념편.typ", "문항편.typ"):

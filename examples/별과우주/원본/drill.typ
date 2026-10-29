@@ -247,6 +247,16 @@
   }
 ]
 
+// 문항이 칸보다 크면 겹쳐 그리지 않고 칸에 맞게 줄인 뒤, 오른쪽 위에 빨간 「칸 넘침」을 단다(확인 그림에서 찾아 그림을 줄이거나 문항을 옮길 것)
+#let fit-cell(body) = layout(size => {
+  let h = measure(block(width: size.width, body)).height
+  if h <= size.height + 6mm { body } else {   // 칸 사이 여백(6mm)까지는 넘쳐도 겹치지 않음
+    let r = (size.height + 6mm) / h * 0.98
+    place(top + right, dy: -4mm, text(font: sans, size: 7pt, weight: "bold", fill: rgb("C9302C"))[칸 넘침 · 그림을 줄이거나 문항을 옮기세요])
+    scale(x: r * 100%, y: r * 100%, origin: top + left, reflow: true, block(width: size.width, body))
+  }
+})
+
 #let drill(info: (:), summary: (), questions: (), concepts: none, dir: "img", teacher: false, head: none, start: 1) = {
   let head = if head == none { brand.head } else { head }
   set document(title: info.series + " " + str(info.no))
@@ -292,7 +302,7 @@
   for (k, chunk) in questions.chunks(per-page).enumerate() {
     if k > 0 { pagebreak() }
     // 쪽을 네 칸(왼쪽 위·아래, 오른쪽 위·아래)으로 나눠 문항 시작 높이를 맞춤. 칸의 남는 높이가 풀이 공간
-    let cell(j) = if j < chunk.len() { problem(dir, start + k * per-page + j, chunk.at(j)) } else { [] }
+    let cell(j) = if j < chunk.len() { fit-cell(problem(dir, start + k * per-page + j, chunk.at(j))) } else { [] }
     // 행 높이 1fr = 그 쪽에 남은 높이를 반씩(첫 쪽은 제목 아래만)
     grid(columns: (1fr, 1fr), rows: (1fr, 1fr), column-gutter: col-gap, row-gutter: 6mm,
       cell(0), cell(2), cell(1), cell(3))
