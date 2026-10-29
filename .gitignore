@@ -1,0 +1,4 @@
+.DS_Store
+__pycache__/
+examples/*/출력/확인/
+examples/*/출력/파트별/

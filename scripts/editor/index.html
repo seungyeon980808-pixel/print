@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>print 편집기</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#eef0f4; --card:#fff; --text:#14161c; --muted:#6b7080; --faint:#9aa0ad; --line:#e1e4ea; --field:#f6f7f9;
+    --accent:#2b44c9; --accent-soft:#eef1fd; --ok:#12805c; --err:#c9302c; --err-soft:#fdeeee; --warn-soft:#fff6e0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0f1115; --card:#171a21; --text:#eceef3; --muted:#9aa0ad; --faint:#6b7080; --line:#2a2e38; --field:#1d2029;
+      --accent:#7189ff; --accent-soft:#1f2540; --ok:#4cc79a; --err:#ff7a74; --err-soft:#3a1d1d; --warn-soft:#3a3218; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text)}
+  body{font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:14px;letter-spacing:-.01em;word-break:keep-all;display:flex;flex-direction:column}
+  button,select{font:inherit}
+  .top{height:52px;flex:none;display:flex;align-items:center;gap:14px;padding:0 16px;background:var(--card);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700}
+  .brand i{width:22px;height:22px;border-radius:6px;background:var(--accent);display:grid;place-items:center;color:#fff;font-style:normal;font-size:12px}
+  .book{color:var(--muted);font-size:13px}
+  .grow{flex:1}
+  .btn{height:34px;padding:0 13px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .btn:hover{border-color:var(--accent)}
+  .btn.main{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn svg{width:15px;height:15px}
+  .main-area{flex:1;min-height:0;display:grid;grid-template-columns:var(--split,46%) 6px minmax(0,1fr)}
+  .pane{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--card)}
+  .bar{height:44px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--line)}
+  .bar select{height:30px;border-radius:8px;border:1px solid var(--line);background:var(--field);color:var(--text);padding:0 8px;max-width:260px}
+  .bar .lab{font-size:12px;color:var(--faint)}
+  .saved{font-size:12px;color:var(--faint);white-space:nowrap}
+  .saved.dirty{color:var(--accent)}
+  .gutter{cursor:col-resize;background:var(--line)}
+  .gutter:hover{background:var(--accent)}
+  #code{flex:1;min-height:0;position:relative}
+  .CodeMirror{position:absolute;inset:0;height:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,"D2Coding",monospace;background:var(--card);color:var(--text)}
+  .CodeMirror-gutters{background:var(--field);border-right:1px solid var(--line)}
+  .CodeMirror-linenumber{color:var(--faint)}
+  .CodeMirror-cursor{border-left-color:var(--text)}
+  .CodeMirror-selected,.CodeMirror-focused .CodeMirror-selected{background:var(--accent-soft)!important}
+  .cm-err-line{background:var(--err-soft)}
+  textarea#fallback{position:absolute;inset:0;width:100%;height:100%;border:0;padding:12px;font:13px/1.6 ui-monospace,Menlo,monospace;background:var(--card);color:var(--text);resize:none;outline:none}
+  .banner{flex:none;display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:13px;background:var(--warn-soft);border-bottom:1px solid var(--line)}
+  .pages{flex:1;min-height:0;overflow:auto;background:var(--bg);padding:20px;display:flex;flex-direction:column;align-items:center;gap:18px}
+  .pg{position:relative;width:calc(var(--zoom,100) * 1%);max-width:none;cursor:pointer}
+  .pg img{display:block;width:100%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15),0 6px 18px rgba(0,0,0,.06);border-radius:2px}
+  .pg span{position:absolute;left:-2px;top:-17px;font-size:11px;color:var(--faint)}
+  .pg:hover img{outline:2px solid var(--accent)}
+  .status{font-size:12.5px;color:var(--muted);white-space:nowrap}
+  .status b{color:var(--ok)}
+  .status.busy b{color:var(--accent)}
+  .status.bad b{color:var(--err)}
+  .errbox{flex:none;border-top:1px solid var(--line);background:var(--err-soft);padding:10px 14px;font-size:13px;display:flex;gap:10px;align-items:flex-start}
+  .errbox pre{margin:0;flex:1;white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,monospace;max-height:120px;overflow:auto}
+  .errbox a{color:var(--err);font-weight:700;cursor:pointer;text-decoration:underline}
+  .zoom{display:flex;align-items:center;gap:4px}
+  .zoom button{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+  .zoom span{font-size:12px;color:var(--muted);min-width:38px;text-align:center}
+  .modal{position:fixed;inset:0;background:rgba(15,17,21,.5);display:grid;place-items:center;z-index:20;padding:20px}
+  .dlg{width:min(620px,100%);background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:22px}
+  .dlg h3{margin:0 0 4px;font-size:17px}
+  .dlg p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.55}
+  .dlg .ctx{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:12px/1.5 ui-monospace,Menlo,monospace;max-height:150px;overflow:auto;white-space:pre-wrap;margin-bottom:10px}
+  .dlg textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--text);padding:10px 12px;font:inherit;font-size:14px;resize:vertical;outline:none}
+  .dlg textarea:focus{border-color:var(--accent)}
+  .dlg .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .chips button{height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;font-size:12.5px}
+  .chips button:hover{border-color:var(--accent);color:var(--accent)}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#14161c;color:#fff;padding:11px 18px;border-radius:11px;font-size:13.5px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  .empty{color:var(--faint);margin-top:40px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><i>p</i>print 편집기</div>
+  <div class="book" id="book">—</div>
+  <div class="grow"></div>
+  <button class="btn main" id="askBtn" title="고른 부분이나 지금 줄을 AI에게 부탁할 글로 복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>AI에게 부탁</button>
+</header>
+
+<div class="main-area" id="area">
+  <section class="pane">
+    <div class="bar">
+      <span class="lab">원본</span>
+      <select id="file"></select>
+      <div class="grow"></div>
+      <span class="saved" id="saved">—</span>
+      <button class="btn" id="saveBtn" title="⌘S / Ctrl+S">저장</button>
+    </div>
+    <div class="banner" id="extBanner" hidden>AI나 다른 프로그램이 이 파일을 고쳤습니다. <button class="btn" id="reloadBtn">고친 내용 불러오기</button> <button class="btn" id="keepBtn">내 것 유지</button></div>
+    <div id="code"></div>
+  </section>
+  <div class="gutter" id="gutter"></div>
+  <section class="pane">
+    <div class="bar">
+      <span class="lab">조판</span>
+      <select id="target"></select>
+      <div class="grow"></div>
+      <span class="status" id="status"><b>●</b> 준비 중</span>
+      <div class="zoom"><button id="zOut">−</button><span id="zVal">100%</span><button id="zIn">+</button></div>
+    </div>
+    <div class="pages" id="pages"><div class="empty">조판 중…</div></div>
+    <div class="errbox" id="errbox" hidden><pre id="errText"></pre><div style="display:flex;flex-direction:column;gap:6px"><a id="errGo">그 줄로 가기</a><button class="btn" id="errAsk">AI에게 고쳐 달라고</button></div></div>
+  </section>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="dlg">
+    <h3>AI에게 부탁</h3>
+    <p>아래 글이 복사됩니다. 책을 만들던 Claude Code·Codex 대화창에 붙여 넣으세요. AI가 원본을 고치면 오른쪽 쪽이 저절로 바뀝니다.</p>
+    <div class="ctx" id="ctx"></div>
+    <div class="chips" id="chips"></div>
+    <textarea id="ask" placeholder="무엇을 바꿀까요? 예: 이 문항 그림을 조금 키워 줘 / 해설을 더 쉽게 / 이 쪽에 문항이 너무 빽빽해"></textarea>
+    <div class="row"><button class="btn" id="cancel">닫기</button><button class="btn main" id="copy">복사하기</button></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+let ed, cur = null, mtime = 0, dirty = false, ver = -1, filesVer = -1, info = {}, errLine = null, saveTimer, auto = true;
+let zoom = +(localStorageGet('print-zoom') || 100), askCtx = null;
+function localStorageGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function localStorageSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
+const api = (p, o) => fetch(p, o).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error || r.status)));
+const toast = t => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.append(d); setTimeout(() => d.remove(), 2400); };
+const label = p => p.replace(/\.typ$/, '').replace('content', '문항 내용').replace('brand', '책 설정(이름·색·문구)').replace('표지그림', '표지 큰 그림').replace('cover', '표지 서식').replace('drill', '문항편 서식').replace('concept', '개념편 서식').replace('order', '문항 번호 순서');
+
+// 편집기: CodeMirror를 못 받으면 글 상자로
+if (window.CodeMirror) {
+  ed = CodeMirror($('#code'), { lineNumbers: true, lineWrapping: true, indentUnit: 2, tabSize: 2, extraKeys: { 'Cmd-S': () => save(), 'Ctrl-S': () => save() } });
+  ed.on('change', (_, c) => { if (c.origin !== 'setValue') touched(); });
+} else {
+  const ta = document.createElement('textarea'); ta.id = 'fallback'; $('#code').append(ta);
+  ed = { getValue: () => ta.value, setValue: v => { ta.value = v; }, getCursor: () => ({ line: ta.value.slice(0, ta.selectionStart).split('\n').length - 1 }),
+    listSelections: () => [], somethingSelected: () => ta.selectionEnd > ta.selectionStart, getSelection: () => ta.value.slice(ta.selectionStart, ta.selectionEnd),
+    setCursor() {}, scrollIntoView() {}, addLineClass() {}, removeLineClass() {}, focus: () => ta.focus(), getLine: n => ta.value.split('\n')[n] || '' };
+  ta.addEventListener('input', touched);
+  ta.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); save(); } });
+}
+function touched() { dirty = true; $('#saved').textContent = '고치는 중'; $('#saved').className = 'saved dirty'; clearTimeout(saveTimer); if (auto) saveTimer = setTimeout(save, 700); }
+async function save() {
+  if (!cur || !dirty) return;
+  clearTimeout(saveTimer);
+  try { const r = await api('/api/file?p=' + encodeURIComponent(cur), { method: 'POST', body: ed.getValue() }); mtime = r.mtime; dirty = false;
+    $('#saved').textContent = '저장됨'; $('#saved').className = 'saved'; }
+  catch (e) { toast('저장하지 못했습니다: ' + e); }
+}
+$('#saveBtn').onclick = save;
+
+async function openFile(p, line) {
+  if (dirty) await save();
+  const r = await api('/api/file?p=' + encodeURIComponent(p));
+  cur = p; mtime = r.mtime; ed.setValue(r.text); dirty = false; $('#extBanner').hidden = true;
+  $('#file').value = p; $('#saved').textContent = '저장됨'; $('#saved').className = 'saved';
+  localStorageSet('print-file', p);
+  if (line) goLine(line);
+  if ($('#target').dataset.auto !== '0') autoTarget();
+}
+function goLine(n) { if (!ed.setCursor) return; ed.setCursor({ line: n - 1, ch: 0 }); ed.scrollIntoView({ line: n - 1, ch: 0 }, 120); ed.focus(); }
+$('#file').onchange = () => openFile($('#file').value);
+
+// 오른쪽 조판 대상: 지금 파일에 맞게 자동, 또는 직접 고름
+function autoTarget() {
+  const m = cur && cur.match(/^(파트\d+)\/(.+)$/);
+  let t = '책.typ';
+  if (m) t = m[2] === '개념편.typ' ? `${m[1]}/개념편.typ` : `${m[1]}/문항편.typ`;
+  setTarget(t, true);
+}
+async function setTarget(t, isAuto) {
+  if (!isAuto) $('#target').dataset.auto = t === '__auto' ? '1' : '0';
+  if (t === '__auto') return autoTarget();
+  if (info.target === t) { $('#target').value = $('#target').dataset.auto === '0' ? t : '__auto'; return; }
+  await api('/api/target?p=' + encodeURIComponent(t), { method: 'POST' });
+  info.target = t; $('#target').value = $('#target').dataset.auto === '0' ? t : '__auto';
+  $('#autoOpt').textContent = '자동: ' + label(t);
+}
+$('#target').onchange = () => setTarget($('#target').value);
+
+async function loadFiles() {
+  const fs = await api('/api/files');
+  const groups = {};
+  fs.forEach(p => { const g = p.includes('/') ? p.split('/')[0] : '책'; (groups[g] = groups[g] || []).push(p); });
+  $('#file').innerHTML = Object.entries(groups).map(([g, ps]) => `<optgroup label="${g}">${ps.map(p => `<option value="${p}">${label(p.split('/').slice(-1)[0])}${p.split('/').length > 2 ? ' · ' + p : ''}</option>`).join('')}</optgroup>`).join('');
+  const docs = fs.filter(p => /^파트\d+\/(개념편|문항편)\.typ$/.test(p));
+  $('#target').innerHTML = `<option value="__auto" id="autoOpt">자동</option><option value="책.typ">책 전체</option>` + docs.map(p => `<option value="${p}">${p.replace('.typ', '')}</option>`).join('');
+  $('#target').dataset.auto = '1';
+  return fs;
+}
+
+// 조판 상태: 바뀌면 쪽 그림을 다시 받는다(스크롤 자리 유지)
+async function poll() {
+  try {
+    const s = await api('/api/state');
+    info = { ...info, ...s };
+    $('#book').textContent = s.book;
+    const st = $('#status');
+    if (s.busy) { st.className = 'status busy'; st.innerHTML = '<b>●</b> 조판 중'; }
+    else if (s.error) { st.className = 'status bad'; st.innerHTML = '<b>●</b> 오류'; }
+    else { st.className = 'status'; st.innerHTML = `<b>●</b> ${s.pages}쪽 · ${(s.ms / 1000).toFixed(1)}초`; }
+    if (s.ver !== ver) { ver = s.ver; showPages(s); }
+    if (s.files_ver !== filesVer) { const first = filesVer < 0; filesVer = s.files_ver; if (!first) checkExternal(); }
+  } catch { $('#status').className = 'status bad'; $('#status').innerHTML = '<b>●</b> 편집기 서버가 꺼졌습니다'; }
+  setTimeout(poll, 450);
+}
+function showPages(s) {
+  const box = $('#pages'), eb = $('#errbox');
+  if (errLine != null && ed.removeLineClass) { ed.removeLineClass(errLine, 'background', 'cm-err-line'); errLine = null; }
+  if (s.error) {
+    eb.hidden = false; $('#errText').textContent = s.error.message + (s.error.file ? `\n${s.error.file} ${s.error.line}줄` : '');
+    $('#errGo').hidden = !s.error.file;
+    if (s.error.file === cur && ed.addLineClass) { errLine = s.error.line - 1; ed.addLineClass(errLine, 'background', 'cm-err-line'); }
+    return;   // 오류면 마지막으로 성공한 쪽을 그대로 둔다
+  }
+  eb.hidden = true;
+  const have = box.querySelectorAll('.pg').length;
+  if (have !== s.pages) box.innerHTML = Array.from({ length: s.pages }, (_, i) => `<div class="pg" data-p="${i + 1}"><span>${i + 1}</span><img alt="${i + 1}쪽"></div>`).join('') || '<div class="empty">쪽이 없습니다</div>';
+  box.querySelectorAll('.pg').forEach(pg => { pg.querySelector('img').src = `/page/${pg.dataset.p}.svg?v=${s.ver}`; pg.onclick = () => askPage(+pg.dataset.p); });
+}
+$('#errGo').onclick = () => { const e = info.error; if (!e || !e.file) return; e.file === cur ? goLine(e.line) : openFile(e.file, e.line); };
+async function checkExternal() {
+  if (!cur) return;
+  try {
+    const r = await api('/api/file?p=' + encodeURIComponent(cur));
+    if (r.mtime === mtime) return;
+    if (!dirty) { const c = ed.getCursor(); mtime = r.mtime; ed.setValue(r.text); if (ed.setCursor) { ed.setCursor(c); } toast('AI가 고친 내용을 불러왔습니다'); }
+    else $('#extBanner').hidden = false;
+  } catch {}
+}
+$('#reloadBtn').onclick = () => { dirty = false; openFile(cur); };
+$('#keepBtn').onclick = () => { $('#extBanner').hidden = true; dirty = true; save(); };
+
+// AI에게 부탁: 파일·줄·지금 내용·부탁을 한 덩어리 글로 만들어 복사
+const CHIPS = { code: ['더 쉽게 고쳐 줘', '문장을 짧게', '그림을 키워 줘', '오타를 찾아 줘', '해설을 자세히'], page: ['이 쪽이 너무 빽빽해', '여백이 너무 많아', '그림이 작아', '줄바꿈이 어색해', '표가 넘쳐'] };
+function openAsk(ctx, chips) {
+  askCtx = ctx; $('#ctx').textContent = ctx.show; $('#ask').value = '';
+  $('#chips').innerHTML = chips.map(c => `<button type="button">${c}</button>`).join('');
+  $('#chips').querySelectorAll('button').forEach(b => b.onclick = () => { $('#ask').value = ($('#ask').value ? $('#ask').value + ' ' : '') + b.textContent; $('#ask').focus(); });
+  $('#modal').hidden = false; setTimeout(() => $('#ask').focus(), 30);
+}
+$('#askBtn').onclick = () => {
+  if (!cur) return;
+  let a, b, text;
+  if (ed.listSelections && ed.somethingSelected()) {
+    const s = ed.listSelections()[0]; a = Math.min(s.anchor.line, s.head.line) + 1; b = Math.max(s.anchor.line, s.head.line) + 1; text = ed.getSelection();
+  } else { a = b = ed.getCursor().line + 1; text = ed.getLine(a - 1); }
+  const where = `${cur} ${a === b ? a + '줄' : a + '–' + b + '줄'}`;
+  openAsk({ show: `${where}\n${text}`, body: `파일: ${where}\n지금 내용:\n\`\`\`\n${text}\n\`\`\`` }, CHIPS.code);
+};
+function askPage(p) {
+  const t = info.target === '책.typ' ? `책 전체 PDF ${p}쪽(표지 포함 순서)` : `${info.target.replace('.typ', '')} ${p}쪽`;
+  openAsk({ show: t, body: `쪽: ${t}` }, CHIPS.page);
+}
+$('#errAsk').onclick = () => { const e = info.error; openAsk({ show: e.text.slice(0, 600), body: `조판 오류:\n\`\`\`\n${e.text.trim()}\n\`\`\`` }, ['이 오류를 고쳐 줘']); $('#ask').value = '이 오류를 고쳐 줘'; };
+$('#copy').onclick = async () => {
+  const msg = `[print 편집기에서 보낸 부탁]\n책: ${info.book} (원본 폴더: ${info.root})\n${askCtx.body}\n부탁: ${$('#ask').value.trim() || '(위 내용을 보고 고쳐 줘)'}\n\n고친 뒤 편집기 오른쪽 쪽이 저절로 바뀌니, 어느 쪽이 바뀌었는지만 알려 줘.`;
+  try { await navigator.clipboard.writeText(msg); } catch { const t = document.createElement('textarea'); t.value = msg; document.body.append(t); t.select(); document.execCommand('copy'); t.remove(); }
+  $('#modal').hidden = true; toast('복사했습니다. AI 대화창에 붙여 넣으세요');
+};
+$('#cancel').onclick = () => { $('#modal').hidden = true; };
+$('#modal').onclick = e => { if (e.target.id === 'modal') $('#modal').hidden = true; };
+addEventListener('keydown', e => { if (e.key === 'Escape') $('#modal').hidden = true; if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && !$('#modal').hidden) $('#copy').click(); });
+
+// 확대 · 칸 나누기
+function setZoom(z) { zoom = Math.max(40, Math.min(160, z)); document.documentElement.style.setProperty('--zoom', zoom); $('#zVal').textContent = zoom + '%'; localStorageSet('print-zoom', zoom); }
+$('#zIn').onclick = () => setZoom(zoom + 10); $('#zOut').onclick = () => setZoom(zoom - 10);
+setZoom(zoom);
+$('#gutter').onmousedown = e => {
+  e.preventDefault();
+  const move = ev => { const w = Math.max(25, Math.min(75, ev.clientX / innerWidth * 100)); $('#area').style.setProperty('--split', w + '%'); if (ed.refresh) ed.refresh(); };
+  addEventListener('mousemove', move); addEventListener('mouseup', () => removeEventListener('mousemove', move), { once: true });
+};
+addEventListener('beforeunload', () => { if (dirty) save(); });
+
+(async () => {
+  const fs = await loadFiles();
+  const first = localStorageGet('print-file');
+  await openFile(fs.includes(first) ? first : (fs.find(p => p === '파트1/content.typ') || fs[0]));
+  poll();
+})();
+</script>
+</body>
+</html>
