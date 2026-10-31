@@ -53,9 +53,10 @@ scripts/
   new_book.py         새 책 원본 폴더 만들기
   build.py            PDF 뽑기(한 권 · 파트별 · 확인용 그림)
   find_items.py       평가원 기출 19,760문항 글 검색
+  find_standards.py   2022 개정 교육과정 성취기준·원문 검색
   get_figure.py       기출 문항을 원본 시험지에서 고해상도 그림으로
   editor/             편집기(serve.py + index.html)
-data/                 기출 글 색인(exam-search에서 묶음) · 시험지 경로표
+data/                 기출 글 색인(exam-search에서 묶음) · 시험지 경로표 · 교육과정 성취기준
 fonts/                Pretendard(SIL OFL)
 survey/               설문 페이지
 examples/별과우주/    완성 예시: 원본/ · 출력/ · 문항배정표.md
@@ -68,6 +69,13 @@ examples/별과우주/    완성 예시: 원본/ · 출력/ · 문항배정표.m
 - [Typst](https://typst.app) 0.13 이상 — 맥 `brew install typst`, 윈도우 `winget install --id Typst.Typst -e`
 - Python 3 + `pymupdf` — 교과서·기출 PDF 읽기
 - 본문 글꼴 KoPub 바탕(무료) — 맥 `brew install --cask font-ko-pub-batang`. 없으면 Noto Serif KR로 대신합니다. 제목 글꼴 Pretendard는 저장소에 들어 있습니다.
+
+## 교과서 PDF 없이도
+
+단원만 적으면 교과서 PDF 없이 **평가원 기출 + 2022 개정 교육과정 성취기준**으로 만듭니다. 파트는 성취기준 단위로 나누고, 문항마다 성취기준 코드를 맞춥니다. 교과서 PDF를 넣으면 교과서 순서·용어·쪽수와 교과서 변형 문항이 더해집니다.
+
+- 성취기준: `scripts/find_standards.py` — 중학교 · 고등학교 보통교과 3,838개와 공식 원문([korean-secondary-learning-map-mcp](https://github.com/raphysicst-create/korean-secondary-learning-map-mcp)에서 묶음, 출처는 [data/CURRICULUM-NOTICE.md](data/CURRICULUM-NOTICE.md)). 2026-1호 개정분은 아직 반영되지 않았습니다.
+- 교육과정 MCP를 이미 연결해 쓰고 있다면 AI가 학습 주제·선수 관계까지 함께 봅니다(없어도 됩니다).
 
 ## 기출 데이터
 
