@@ -38,6 +38,9 @@ try:   # 칸에 안 들어가 줄인 문항이 있으면 쪽 번호를 알려 �
         print(f"주의: 칸 넘침 {len(bad)}쪽 — PDF 쪽 {', '.join(map(str, bad))}. 그림을 줄이거나 문항을 다른 칸으로 옮기세요.", file=sys.stderr)
 except ImportError:
     pass
+# 정답을 교사용으로 따로 두는 책이면 교사용 PDF도
+if os.path.exists(os.path.join(root, "교사용.typ")) and 'answers: "teacher"' in open(os.path.join(root, "brand.typ"), encoding="utf-8").read():
+    typst("교사용.typ", os.path.join(out, name + "_교사용.pdf"))
 if a.parts:
     for d in sorted(glob.glob(os.path.join(root, "파트*")), key=lambda p: int("".join(c for c in os.path.basename(p) if c.isdigit()) or 0)):
         for f in ("개념편.typ", "문항편.typ"):

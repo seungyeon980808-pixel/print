@@ -1,7 +1,7 @@
 // 표지 큰 그림: 가로 420 × 세로 297mm 한 장. 왼쪽 절반 = 뒤표지, 오른쪽 절반 = 앞표지(펼치면 이어짐).
 // 기본 그림은 겹친 타원과 점. 책마다 단원을 대표하는 도해로 바꾼다(예: examples/별과우주/표지그림.typ의 우리은하).
 // 인쇄용이므로 검정 + 포인트 색(ink) 한 가지, 명도 차이만 쓴다.
-#import "brand.typ": brand
+#import "style.typ": brand
 #let ink = brand.accent
 
 #let art = box(width: 420mm, height: 297mm, {

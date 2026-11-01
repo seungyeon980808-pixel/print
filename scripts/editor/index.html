@@ -131,7 +131,7 @@ function localStorageGet(k) { try { return localStorage.getItem(k); } catch { re
 function localStorageSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
 const api = (p, o) => fetch(p, o).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error || r.status)));
 const toast = t => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.append(d); setTimeout(() => d.remove(), 2400); };
-const label = p => p.replace(/\.typ$/, '').replace('content', '문항 내용').replace('brand', '책 설정(이름·색·문구)').replace('표지그림', '표지 큰 그림').replace('cover', '표지 서식').replace('drill', '문항편 서식').replace('concept', '개념편 서식').replace('order', '문항 번호 순서');
+const label = p => p.replace(/\.typ$/, '').replace('content', '문항 내용').replace('brand', '책 설정(이름·색·문구)').replace('표지그림', '표지 큰 그림').replace('cover', '표지 서식').replace('drill', '문항편 서식').replace('concept', '개념편 서식').replace('order', '문항 번호 순서').replace('style', '서식 선택값').replace('교사용', '교사용 정답');
 
 // 편집기: CodeMirror를 못 받으면 글 상자로
 if (window.CodeMirror) {

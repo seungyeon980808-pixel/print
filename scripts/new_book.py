@@ -28,7 +28,7 @@ def put(path, text):
         f.write(text)
     print("만듦:", os.path.relpath(path, root))
 
-for f in ("brand.typ", "drill.typ", "concept.typ", "cover.typ", "표지그림.typ"):
+for f in ("brand.typ", "style.typ", "drill.typ", "concept.typ", "cover.typ", "표지그림.typ"):
     dst = os.path.join(root, f)
     if os.path.exists(dst):
         print("있음(그대로 둠):", f)
@@ -50,10 +50,18 @@ with open(os.path.join(root, "order.typ"), "w", encoding="utf-8") as f:
     f.write("".join(f'#import "파트{n}/content.typ" as p{n}\n' for n in range(1, k + 1)))
     f.write(f"#let counts = ({', '.join(f'p{n}' for n in range(1, k + 1))},).map(p => p.questions.len())\n")
     f.write("#let start-of(n) = 1 + counts.slice(0, n - 1).sum(default: 0)\n")
+parts = "(" + ", ".join(f"(p{n}.info, p{n}.questions, start-of({n}))" for n in range(1, k + 1)) + ",)"
+head = "".join(f'#import "파트{n}/content.typ" as p{n}\n' for n in range(1, k + 1))
 with open(os.path.join(root, "책.typ"), "w", encoding="utf-8") as f:
-    f.write("// 한 권: 앞표지 → 파트마다 개념편 → 문항편(정답·해설) → 뒤표지. 표지는 쪽 번호에서 빼고, 쪽 번호와 문항 번호는 끝까지 이어진다. (new_book.py가 만듦)\n")
-    f.write('#import "cover.typ": cover-front, cover-back\n#cover-front\n#counter(page).update(1)\n')
+    f.write("// 한 권: 앞표지 → 파트마다 개념편 → 문항편 → 정답·해설 → 뒤표지. 표지는 쪽 번호에서 빼고, 쪽 번호와 문항 번호는 끝까지 이어진다. (new_book.py가 만듦)\n")
+    f.write("// 정답 위치는 brand.typ의 answers: \"part\"면 파트마다 끝, \"end\"면 책 맨 뒤에 모아, \"teacher\"면 교사용.typ로 따로.\n")
+    f.write('#import "cover.typ": cover-front, cover-back\n#import "style.typ": answers-at\n#import "drill.typ": answers-book\n#import "order.typ": start-of\n' + head)
+    f.write("#cover-front\n#counter(page).update(1)\n")
     f.write("".join(f'#include "파트{n}/개념편.typ"\n#include "파트{n}/문항편.typ"\n' for n in range(1, k + 1)))
-    f.write("#cover-back\n")
-print(f"order.typ · 책.typ: 파트 {k}개")
+    f.write(f"#if answers-at == \"end\" {{ answers-book({parts}) }}\n#cover-back\n")
+with open(os.path.join(root, "교사용.typ"), "w", encoding="utf-8") as f:
+    f.write("// 교사용 정답·해설(brand.typ의 answers가 \"teacher\"일 때 build.py가 따로 뽑는다). (new_book.py가 만듦)\n")
+    f.write('#import "drill.typ": answers-book\n#import "order.typ": start-of\n' + head)
+    f.write(f"#answers-book({parts}, title: [교사용 정답과 해설])\n")
+print(f"order.typ · 책.typ · 교사용.typ: 파트 {k}개")
 print("다음: brand.typ를 브리프대로 채우고 python3 build.py", root)

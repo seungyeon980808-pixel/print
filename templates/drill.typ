@@ -1,9 +1,8 @@
 // 문제집형 공통 서식(드릴 계열). 내용은 각 학습지 폴더의 content.typ에서 고칩니다.
 // 원칙: 검정 한 가지, 선과 여백으로만 구분, 본문 명조 · 번호/머리/표 머리 고딕, 모든 간격은 아래 값만 사용.
 
-#import "brand.typ": brand   // 책마다 바뀌는 값은 brand.typ 한 곳에
-#let serif = ("KoPub Batang", "Noto Serif KR", "AppleMyungjo")   // 본문: 출판용 본문 서체
-#let sans = ("Pretendard", "Noto Sans KR", "Apple SD Gothic Neo")  // 번호·제목·표 머리
+// 책마다 바뀌는 값은 brand.typ 한 곳에. 글꼴 · 색 · 모서리 · 쪽당 문항 수 · 답 칸 · 정답 위치 · 머리글은 style.typ가 brand.typ에서 읽음
+#import "style.typ": brand, serif, sans, rad, per-page, answer-box, answers-at, header-style
 #let size = brand.size     // 본문
 #let gray = luma(110)
 #let hair = 0.35pt + black // 가는 선
@@ -12,14 +11,13 @@
 #let gap-q = 8mm           // 문항 사이 최소 여백(남는 높이는 풀이 공간으로 더 벌어짐)
 #let gap-m = 2.4mm         // 발문 · 자료 · 보기 · 선지 사이
 #let col-gap = 12mm
-#let per-page = 4            // 한 쪽에 넣을 문항 수(왼쪽 단 2 · 오른쪽 단 2)
 
 // 문항 표시: content.typ에서 tag: "기출" · "기출변형" · "제작", 어려우면 star: true(도전)
 
 #let chip(t, filled: false) = box( fill: if filled { brand.accent } else { none },
-  stroke: 0.5pt + brand.accent, inset: (x: 1.3mm, y: 0.8mm), radius: 0.5mm,
+  stroke: 0.5pt + brand.accent, inset: (x: 1.3mm, y: 0.8mm), radius: rad(0.5mm),
   text(font: sans, weight: "bold", size: 6.6pt, fill: if filled { white } else { brand.accent }, t))
-#let tag-chip(t) = if t == "변형" { chip("교과서 변형") } else if t == "기출" { box(stroke: 0.5pt + luma(120), inset: (x: 1.3mm, y: 0.8mm), radius: 0.5mm, text(font: sans, weight: "bold", size: 6.6pt, fill: luma(80), t)) } else { chip(t) }
+#let tag-chip(t) = if t == "변형" { chip("교과서 변형") } else if t == "기출" { box(stroke: 0.5pt + luma(120), inset: (x: 1.3mm, y: 0.8mm), radius: rad(0.5mm), text(font: sans, weight: "bold", size: 6.6pt, fill: luma(80), t)) } else { chip(t) }
 
 // 쪽 아래 한마디(쪽마다 돌아감). brand.sayings가 비면 넣지 않음
 #let saying(p) = if brand.sayings.len() == 0 { [] } else { text(font: sans, size: 7.2pt, fill: brand.accent)[“#brand.sayings.at(calc.rem(p - 1, brand.sayings.len()))”] + h(4mm) }
@@ -63,7 +61,7 @@
 }
 
 // ── <보기>: 위 선 가운데에 글자를 얹는 평가원 방식
-#let bogi(items) = block(width: 100%, inset: (top: 4mm, bottom: 3.4mm, x: 4mm), stroke: hair)[
+#let bogi(items) = block(width: 100%, inset: (top: 4mm, bottom: 3.4mm, x: 4mm), stroke: hair, radius: rad(0mm))[
   #place(top + center, dy: -4mm - 0.55em, box(fill: white, inset: (x: 1.8mm), text(font: sans, size: 7.8pt, tracking: 2pt)[〈보기〉]))
   #set par(leading: 0.72em, justify: false)
   #grid(columns: (5.6mm, 1fr), row-gutter: 2.6mm,
@@ -86,8 +84,13 @@
 // ── 서답형: (1)(2)(3) 소문항, 줄 끝에 답 칸
 // 답 칸은 따로 그리지 않음: 소문항만 붙여 쓰고, 문항 칸의 남는 여백이 풀이·답 공간
 #let short-answers(parts) = {
-  // 소문항 아래마다 답을 적을 빈 여백(선·상자 없이)
-  grid(columns: (6mm, 1fr), row-gutter: 10mm, ..parts.enumerate().map(((i, t)) => ([(#(i + 1))], t)).flatten())
+  let rows = parts.enumerate().map(((i, t)) => ([(#(i + 1))], if answer-box == "line" {
+    [#t #h(1fr) #text(font: sans, size: 8pt)[답] #box(width: 24mm, height: 0.9em, stroke: (bottom: hair))]
+  } else if answer-box == "box" {
+    [#t #v(1.2mm) #box(width: 100%, height: 9mm, stroke: hair, radius: rad(0mm))]
+  } else { t }))
+  // 기본(space): 소문항 아래마다 답을 적을 빈 여백(선·상자 없이)
+  grid(columns: (6mm, 1fr), row-gutter: if answer-box == "space" { 10mm } else { 4mm }, ..rows.flatten())
 }
 
 // ── 문항 하나
@@ -213,8 +216,9 @@
 }
 
 // ── 뒤쪽 빠른 정답 + 해설(번호 순서 그대로, 빈 공간 없이)
-#let answer-page(info, questions, start: 1) = [
+#let answer-page(info, questions, start: 1, label: false) = [
   #metadata(("ans", info.no)) <sec>
+  #if label { block(below: 3.4mm, text(font: sans, weight: "bold", size: 11pt)[#text(fill: brand.accent)[#info.series #num(info.no)]#h(2mm)#info.title]) }
   #sec-head[빠른 정답]
   #v(2.4mm)
   #{
@@ -257,9 +261,8 @@
   }
 })
 
-#let drill(info: (:), summary: (), questions: (), concepts: none, dir: "img", teacher: false, head: none, start: 1) = {
-  let head = if head == none { brand.head } else { head }
-  set document(title: info.series + " " + str(info.no))
+// 문항편 · 정답 쪽 공통 쪽 서식(글꼴 · 어절 줄바꿈 · 머리글 · 세로선 · 쪽 아래 한마디)
+#let page-doc(info, body) = {
   set text(font: serif, size: size, lang: "ko")
   set par(spacing: 0.66em, justify: false)
   show "<보기>": "〈\u{2060}보\u{2060}기\u{2060}〉"   // 줄 끝에서 쪼개지지 않게
@@ -270,11 +273,11 @@
     // 위쪽: 왼쪽 학습지 이름, 오른쪽 쪽 번호(첫 쪽은 머리 대신 제목)
     header: context {
       let p = here().page()
-      if not sec-on(p, ("start", "cstart")) {
+      if header-style != "none" and not sec-on(p, ("start", "cstart")) {
         set text(font: sans, size: 7.4pt, fill: gray)
         grid(columns: (1fr, auto), align: bottom,
           [#text(fill: brand.accent, weight: "bold")[#info.series #num(info.no)]#h(2mm)#info.title],
-          text(font: sans, size: 7.4pt, fill: gray)[#brand.org #text(weight: "bold")[#brand.author]])
+          if header-style == "full" { text(font: sans, size: 7.4pt, fill: gray)[#brand.org #text(weight: "bold")[#brand.author]] })
         v(-1mm); line(length: 100%, stroke: hair)
       }
     },
@@ -295,18 +298,39 @@
       align(right, [#saying(p)#text(font: sans, size: 10pt, weight: "bold", str(counter(page).get().first()))])   // 표지는 빼고 본문부터 1쪽
     },
   )
+  body
+}
+
+// 정답 · 해설만 모아 찍기(brand.answers가 "end"면 책.typ 맨 뒤, "teacher"면 교사용.typ). parts = ((info, questions, start), …)
+#let answers-book(parts, title: [정답과 해설]) = {
+  for (k, (info, questions, start)) in parts.enumerate() {
+    page-doc(info, [
+      #if k == 0 { block(below: 5mm, text(font: sans, weight: "bold", size: 18pt, tracking: -0.5pt, title)) }
+      #answer-page(info, questions, start: start, label: true)
+    ])
+  }
+}
+
+#let drill(info: (:), summary: (), questions: (), concepts: none, dir: "img", teacher: false, head: none, start: 1) = {
+  let head = if head == none { brand.head } else { head }
+  set document(title: info.series + " " + str(info.no))
+  page-doc(info, {
   [#metadata(("start", info.no)) <sec>]
   v(-9mm)   // 첫 쪽은 머리글이 없으므로 그 자리만큼 제목을 올림
   title-block(info, summary, teacher, head)
   if concepts != none { concept-page(info, concepts); pagebreak() }
+  let rows = calc.ceil(per-page / 2)
   for (k, chunk) in questions.chunks(per-page).enumerate() {
     if k > 0 { pagebreak() }
-    // 쪽을 네 칸(왼쪽 위·아래, 오른쪽 위·아래)으로 나눠 문항 시작 높이를 맞춤. 칸의 남는 높이가 풀이 공간
+    // 쪽을 칸(왼쪽 단 위→아래, 오른쪽 단 위→아래)으로 나눠 문항 시작 높이를 맞춤. 칸의 남는 높이가 풀이 공간
     let cell(j) = if j < chunk.len() { fit-cell(problem(dir, start + k * per-page + j, chunk.at(j))) } else { [] }
-    // 행 높이 1fr = 그 쪽에 남은 높이를 반씩(첫 쪽은 제목 아래만)
-    grid(columns: (1fr, 1fr), rows: (1fr, 1fr), column-gutter: col-gap, row-gutter: 6mm,
-      cell(0), cell(2), cell(1), cell(3))
+    // 행 높이 1fr = 그 쪽에 남은 높이를 고르게(첫 쪽은 제목 아래만)
+    grid(columns: (1fr, 1fr), rows: (1fr,) * rows, column-gutter: col-gap, row-gutter: 6mm,
+      ..range(rows).map(r => (cell(r), cell(r + rows))).flatten())
   }
-  pagebreak()
-  answer-page(info, questions, start: start)
+  if answers-at == "part" {
+    pagebreak()
+    answer-page(info, questions, start: start)
+  }
+  })
 }

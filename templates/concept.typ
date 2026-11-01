@@ -1,6 +1,6 @@
 // 개념편 공통 서식(파트마다 따로 배부). 쪽 규칙은 drill.typ와 같다: 위 오른쪽 쪽 번호, 아래 오른쪽 잔소리.
 // 원칙: 내용은 두 단에 이어서 흘러 빈 공간을 만들지 않는다. 정답은 맨 뒤 한 곳.
-#import "drill.typ": brand, sans, serif, size, gray, hair, rule, col-gap, key, num, sec-on, name-field, saying
+#import "drill.typ": brand, sans, serif, size, gray, hair, rule, col-gap, key, num, sec-on, name-field, saying, rad, header-style
 
 // 개념 상자: 단·쪽을 넘어 나뉠 수 있게. 제목은 내용과 붙어 다님
 #let concept-box(title, body) = block(width: 100%, breakable: true, below: 6mm)[
@@ -28,7 +28,7 @@
 #let qnum(n) = box(width: 4.4mm, text(font: sans, weight: "bold", size: 8pt, fill: brand.accent)[#n])
 
 // 확인 퀴즈: O·X, 빈칸, 계산(번호는 이어서). 단을 넘어 나뉠 수 있음
-#let quiz(ox: (), fill: (), calc: ()) = block(width: 100%, breakable: true, stroke: 0.6pt + brand.accent, inset: 3.4mm, radius: 1mm, below: 6mm)[
+#let quiz(ox: (), fill: (), calc: ()) = block(width: 100%, breakable: true, stroke: 0.6pt + brand.accent, inset: 3.4mm, radius: rad(1mm), below: 6mm)[
   #block(sticky: true, text(font: sans, weight: "bold", size: 10pt, fill: brand.accent)[확인 퀴즈])
   #set par(justify: false, leading: 0.6em)
   #let n = 0
@@ -104,11 +104,11 @@
   set page(paper: brand.paper, margin: (x: 20mm, top: 26mm, bottom: 16mm),
     header: context {
       let p = here().page()
-      if not sec-on(p, ("start", "cstart")) {
+      if header-style != "none" and not sec-on(p, ("start", "cstart")) {
         set text(font: sans, size: 7.4pt, fill: gray)
         grid(columns: (1fr, auto), align: bottom,
           [#text(fill: brand.accent, weight: "bold")[#info.series #num(info.no) 개념편]#h(2mm)#info.title],
-          text(font: sans, size: 7.4pt, fill: gray)[#brand.org #text(weight: "bold")[#brand.author]])
+          if header-style == "full" { text(font: sans, size: 7.4pt, fill: gray)[#brand.org #text(weight: "bold")[#brand.author]] })
         v(-1mm); line(length: 100%, stroke: hair)
       }
     },
