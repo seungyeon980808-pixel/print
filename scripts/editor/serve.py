@@ -26,7 +26,7 @@ os.makedirs(CACHE, exist_ok=True)
 
 # 새 폴더 구조(자료폴더/작업/원본)면 자료 폴더 이름을 책 이름으로
 BOOK = os.path.basename(os.path.dirname(os.path.dirname(ROOT))) if os.path.basename(os.path.dirname(ROOT)) == "작업" else (os.path.basename(os.path.dirname(ROOT)) or os.path.basename(ROOT))
-S = {"qpos": [], "ver": 0, "target": "책.typ", "pages": 0, "error": None, "ms": 0, "busy": False, "changed": {}, "files_ver": 0}
+S = {"qparts": [], "qpos": [], "ver": 0, "target": "책.typ", "pages": 0, "error": None, "ms": 0, "busy": False, "changed": {}, "files_ver": 0}
 lock = threading.Lock()
 
 def inside(rel):
@@ -83,8 +83,22 @@ def qmap():
             tag = (re.search(r'(?:tag|src):\s*"([^"]*)"', body) or [None, ""])[1]
             lm = re.search(r"lead:\s*(?:body\()?\[(.*?)\]", body, re.S)
             lead = re.sub(r"\s+", " ", re.sub(r"#\w+(\.\w+)*(\[[^\]]*\])?|[\[\]()\"\\]", " ", lm.group(1) if lm else "")).strip()
-            out.append({"n": n, "file": rel, "a": a, "b": b, "line0": text.count("\n", 0, a) + 1, "line1": text.count("\n", 0, b) + 1, "tag": tag, "text": lead[:40]})
+            keys = [(m.group(1), m.start(1)) for m in re.finditer(r"(?m)^\s*(lead|material|after|ask|bogi|choices|explain|answer|no|orig|how|source|form|figs|cols|points)\s*:", body)]
+            pl = {}
+            for i, (k, at) in enumerate(keys):
+                if k in ("lead", "material", "after", "ask", "bogi", "choices"):
+                    end = keys[i + 1][1] if i + 1 < len(keys) else len(body)
+                    l0 = text.count("\n", 0, a + at) + 1
+                    l1 = max(l0, text.count("\n", 0, a + end) + (0 if i + 1 == len(keys) else 0))   # 다음 키 줄 바로 앞까지
+                    if i + 1 < len(keys): l1 = max(l0, text.count("\n", 0, a + keys[i + 1][1]))
+                    pl[k] = [l0, l1]
+            out.append({"n": n, "file": rel, "a": a, "b": b, "parts": pl, "line0": text.count("\n", 0, a) + 1, "line1": text.count("\n", 0, b) + 1, "tag": tag, "text": lead[:40]})
     return out
+
+def query(target, label):
+    r = subprocess.run(["typst", "query", "--root", TROOT, "--font-path", FONTS, target, label, "--field", "value"], cwd=ROOT, capture_output=True, text=True)
+    try: return json.loads(r.stdout) if r.returncode == 0 else []
+    except ValueError: return []
 
 def qpos(target):
     """조판한 문서에서 문항마다 쪽 · 위치(pt). 서식에 <qpos> 표시가 없으면 빈 목록."""
@@ -135,6 +149,7 @@ def compile_once():
                 os.replace(os.path.join(tmp, f), os.path.join(cur, f)); n += 1
             S["pages"], S["error"] = n, None
             S["qpos"] = qpos(target)
+            S["qparts"] = query(target, "<qpart>")
         S["ver"] += 1
 
 def watcher():
@@ -227,8 +242,8 @@ class H(BaseHTTPRequestHandler):
                 with lock:
                     return self.send(200, {k: S[k] for k in ("ver", "target", "pages", "error", "ms", "busy", "files_ver")} | {"book": BOOK, "root": ROOT})
             if u.path == "/api/questions":
-                with lock: pos = list(S["qpos"])
-                return self.send(200, {"questions": qmap(), "pos": pos, "exam": EXAM, "ai": {k: bool(shutil.which(k)) for k in ("claude", "codex")}})
+                with lock: pos, parts = list(S["qpos"]), list(S["qparts"])
+                return self.send(200, {"questions": qmap(), "pos": pos, "parts": parts, "exam": EXAM, "ai": {k: bool(shutil.which(k)) for k in ("claude", "codex")}})
             if u.path == "/api/ai/job":
                 j = JOBS.get(q["id"][0])
                 if not j: return self.send(404, {"error": "작업 없음"})

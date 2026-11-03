@@ -39,6 +39,9 @@
   }
 }
 
+// 편집기: 문항 안 부분(지문 · 자료 · 발문 · 보기 · 선지)이 시작하는 자리. 보이지 않는다
+#let mk-in(n, part) = context { let p = here().position(); [#metadata((n: n, part: part, page: p.page, x: p.x.pt(), y: p.y.pt())) <qpart>] }   // 글줄 안(지문 첫 글자 앞)
+#let mk(n, part) = place(mk-in(n, part))   // 블록 사이: 흐름 밖에 두어 자리를 차지하지 않음
 // ── 문항 하나: 「1.」 번호 뒤에 발문을 이어 쓰고, 둘째 줄부터는 번호만큼 들여 씀(평가원 방식)
 #let pts(q) = if "points" in q { [ #text(font: sans, size: 0.84em)[\[#q.points;점\]]] }
 #let problem(n, q) = block(breakable: false, width: 100%)[
@@ -46,16 +49,25 @@
   #context { let p = here().position(); [#metadata((n: n, page: p.page, x: p.x.pt(), y: p.y.pt(), w: page.width.pt(), h: page.height.pt())) <qpos>] }   // 편집기: 쪽에서 문항 위치
   #let nw = if n < 10 { 5.2mm } else { 7mm }   // 두 자리 번호는 칸을 넓혀 발문과 띄움
   #set par(justify: false, leading: 0.72em, hanging-indent: nw)
+  #mk(n, "lead")
   #box(width: nw, text(font: sans, weight: "bold", size: 1.08em)[#n.])#q.lead
   #set par(hanging-indent: 0mm)
   #block(inset: (left: nw), width: 100%)[
-    #if "material" in q [#v(gap-m)#material(q.material)]
-    #if "after" in q [#v(gap-m)#q.after]
+    #if "material" in q [#v(gap-m)
+      #mk(n, "material")
+      #material(q.material)]
+    #if "after" in q [#v(gap-m)
+      #mk(n, "after")
+      #q.after]
     #v(gap-m)
-    #q.ask#pts(q)
-    #if "bogi" in q [#v(gap-m + 1mm)#bogi(q.bogi)]
+    #mk-in(n, "ask")#q.ask#pts(q)
+    #if "bogi" in q [#v(gap-m + 1mm)
+      #mk(n, "bogi")
+      #bogi(q.bogi)]
     #v(gap-m + 0.6mm)
+    #mk(n, "choices")
     #choices(q)
+    #mk(n, "end")
   ]
 ]
 

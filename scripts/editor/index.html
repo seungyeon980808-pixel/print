@@ -75,6 +75,18 @@
   .qbox.pick{box-shadow:inset 0 0 0 2px var(--accent);background:rgba(43,68,201,.07)}
   .qbox em{position:absolute;right:4px;top:4px;font-style:normal;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:1px 6px;opacity:0}
   .qbox.pick em,.qbox:hover em{opacity:1}
+  /* 부분 색 띠(더블클릭): 지문 · 자료 · 발문 · 보기 · 선지 */
+  .pband{position:absolute;border-radius:5px;cursor:pointer;z-index:2;transition:filter .1s}
+  .pband:hover{filter:brightness(.96)}
+  .pband b{position:absolute;left:-2px;top:-9px;font-size:10.5px;font-weight:700;color:#fff;border-radius:5px;padding:1px 6px;white-space:nowrap}
+  .p-lead{background:rgba(59,108,240,.14);box-shadow:inset 3px 0 0 #3b6cf0} .p-lead b{background:#3b6cf0}
+  .p-material{background:rgba(120,126,140,.13);box-shadow:inset 3px 0 0 #787e8c} .p-material b{background:#787e8c}
+  .p-after{background:rgba(120,126,140,.13);box-shadow:inset 3px 0 0 #787e8c} .p-after b{background:#787e8c}
+  .p-ask{background:rgba(22,150,90,.15);box-shadow:inset 3px 0 0 #16965a} .p-ask b{background:#16965a}
+  .p-bogi{background:rgba(232,128,20,.16);box-shadow:inset 3px 0 0 #e88014} .p-bogi b{background:#e88014}
+  .p-choices{background:rgba(140,70,220,.14);box-shadow:inset 3px 0 0 #8c46dc} .p-choices b{background:#8c46dc}
+  .cm-p-lead{background:rgba(59,108,240,.13)} .cm-p-material,.cm-p-after{background:rgba(120,126,140,.13)} .cm-p-ask{background:rgba(22,150,90,.14)} .cm-p-bogi{background:rgba(232,128,20,.15)} .cm-p-choices{background:rgba(140,70,220,.13)}
+  .cm-pl-lead{box-shadow:inset 4px 0 0 #3b6cf0} .cm-pl-material,.cm-pl-after{box-shadow:inset 4px 0 0 #787e8c} .cm-pl-ask{box-shadow:inset 4px 0 0 #16965a} .cm-pl-bogi{box-shadow:inset 4px 0 0 #e88014} .cm-pl-choices{box-shadow:inset 4px 0 0 #8c46dc}
   .zoom{display:flex;align-items:center;gap:4px}
   .zoom button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
   .zoom span{font-size:12px;color:var(--muted);min-width:38px;text-align:center}
@@ -163,7 +175,7 @@
       <div class="zoom"><button id="zOut" title="작게">−</button><span id="zVal">100%</span><button id="zIn" title="크게">+</button></div>
     </div>
     <div class="pages" id="pages"><div class="empty">조판 중…</div></div>
-    <div class="hint" id="hint">문항을 누르면 왼쪽 원본이 그 자리로 갑니다 · ⌘(Ctrl)을 누른 채 누르면 여러 문항을 골라 AI에게 맡길 수 있습니다</div>
+    <div class="hint" id="hint">문항을 누르면 왼쪽 원본이 그 자리로 갑니다 · 한 번 더(더블클릭) 누르면 지문 · 발문 · 보기 · 선지를 색으로 나눠 보여 줍니다 · ⌘(Ctrl)+클릭으로 여러 문항</div>
     <div class="tray" id="tray" hidden>
       <div class="tray-h"><b>고른 문항</b><div class="ns" id="trayNs"></div><div class="grow"></div><button class="btn ghost" id="trayClear">선택 해제</button></div>
       <div class="tray-row">
@@ -203,7 +215,7 @@
 const $ = s => document.querySelector(s);
 let ed, cur = null, mtime = 0, dirty = false, ver = -1, filesVer = -1, info = {}, errLine = null, saveTimer, auto = true;
 let zoom = +(localStorageGet('print-zoom') || 100), askCtx = null;
-let Q = [], POS = [], AI = {}, active = null, picked = new Set(), qMarks = [], mode = 'review', prov = null, job = null;
+let lastTap = {}, PARTS = [], partsOn = null, Q = [], POS = [], AI = {}, active = null, picked = new Set(), qMarks = [], mode = 'review', prov = null, job = null;
 function localStorageGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
 function localStorageSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
 const api = (p, o) => fetch(p, o).then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error || r.status)));
@@ -292,7 +304,7 @@ async function loadFiles() {
 
 // 문항 지도: 번호 → 파일 · 줄, 쪽 위치
 async function loadQuestions() {
-  try { const r = await api('/api/questions'); Q = r.questions; POS = r.pos; AI = r.ai; $('#xlsBtn').hidden = !r.exam; } catch { return; }
+  try { const r = await api('/api/questions'); Q = r.questions; POS = r.pos; PARTS = r.parts || []; AI = r.ai; $('#xlsBtn').hidden = !r.exam; } catch { return; }
   const parts = {};
   Q.forEach(q => { const g = q.file.split('/')[0]; (parts[g] = parts[g] || []).push(q); });
   const keep = $('#qsel').value;
@@ -310,6 +322,13 @@ function markQuestions() {
   if (!ed.markText || !cur) return;
   const q = Q.find(x => x.n === active && x.file === cur);
   if (!q) return;
+  if (partsOn === q.n && q.parts) {   // 부분마다 다른 색
+    for (const [k, [a, b]] of Object.entries(q.parts)) {
+      qMarks.push(ed.markText({ line: a - 1, ch: 0 }, { line: b - 1, ch: 9999 }, { className: 'cm-p-' + k }));
+      for (let l = a - 1; l < b; l++) { ed.addLineClass(l, 'wrap', 'cm-pl-' + k); qMarks.push({ clear: () => ed.removeLineClass(l, 'wrap', 'cm-pl-' + k) }); }
+    }
+    return;
+  }
   qMarks.push(ed.markText({ line: q.line0 - 1, ch: 0 }, { line: q.line1 - 1, ch: 9999 }, { className: 'cm-q' }));
   for (let l = q.line0 - 1; l < q.line1; l++) { ed.addLineClass(l, 'wrap', 'cm-q-line'); qMarks.push({ clear: () => ed.removeLineClass(l, 'wrap', 'cm-q-line') }); }
 }
@@ -324,6 +343,20 @@ function boxesFor(page) {
     return { n: p.n, top: (p.y - 8) / p.h * 100, height: (bottom - p.y) / p.h * 100, left: left / p.w * 100, width: width / p.w * 100 };
   });
 }
+const PART_NAME = { lead: '지문', material: '자료', after: '자료', ask: '발문', bogi: '보기', choices: '선지' };
+function drawParts(pg) {
+  if (partsOn == null) return;
+  const page = +pg.dataset.p, box = boxesFor(page).find(b => b.n === partsOn); if (!box) return;
+  const ps = PARTS.filter(x => x.n === partsOn && x.page === page).sort((a, b) => a.y - b.y);
+  const ref = POS.find(x => x.n === partsOn); if (!ref) return;
+  ps.forEach((x, i) => {
+    if (x.part === 'end' || !PART_NAME[x.part]) return;
+    const nx = ps[i + 1]; const y1 = nx ? nx.y : x.y + 20;
+    const d = document.createElement('div'); d.className = 'pband p-' + x.part; d.dataset.part = x.part;
+    d.style.cssText = `top:${(x.y - 2) / ref.h * 100}%;height:${Math.max(x.part === 'choices' ? 16 : 10, y1 - x.y - 1) / ref.h * 100}%;left:${box.left}%;width:${box.width}%`;
+    d.innerHTML = `<b>${PART_NAME[x.part]}</b>`; pg.append(d);
+  });
+}
 function drawBoxes() {
   document.querySelectorAll('#pages .pg').forEach(pg => {
     pg.querySelectorAll('.qbox').forEach(x => x.remove());
@@ -332,15 +365,25 @@ function drawBoxes() {
       d.dataset.n = b.n; d.style.cssText = `top:${b.top}%;height:${b.height}%;left:${b.left}%;width:${b.width}%`;
       d.innerHTML = `<em>${b.n}번</em>`; pg.append(d);
     }
+    pg.querySelectorAll('.pband').forEach(x => x.remove()); drawParts(pg);
   });
 }
 $('#pages').addEventListener('click', e => {
+  const pb = e.target.closest('.pband');
+  if (pb) { const now = Date.now(); if (lastTap.n === 'band' && now - lastTap.t < 450) { lastTap = {}; partsOn = null; markQuestions(); drawBoxes(); return; } lastTap = { n: 'band', t: now };
+    const q = Q.find(x => x.n === partsOn), r = q && q.parts && q.parts[pb.dataset.part];
+    if (r) { goLine(r[0], true); if (ed.heightAtLine) { syncing = true; ed.scrollTo(null, Math.max(0, ed.heightAtLine(r[0] - 1, 'local') - 8)); syncing = false; } } return; }
   const b = e.target.closest('.qbox');
-  if (b) { const n = +b.dataset.n; if (e.metaKey || e.ctrlKey || e.shiftKey) togglePick(n); else selectQ(n); return; }
+  if (b) { const n = +b.dataset.n; if (e.metaKey || e.ctrlKey || e.shiftKey) { togglePick(n); return; }
+    // 같은 문항을 두 번 빨리 누르면(더블클릭) 부분 색 띠를 켜고 끔. 칸이 다시 그려져 브라우저 dblclick이 사라지므로 직접 잰다
+    const now = Date.now();
+    if (lastTap.n === n && now - lastTap.t < 450) { lastTap = {}; partsOn = partsOn === n ? null : n; markQuestions(); drawBoxes(); getSelection()?.removeAllRanges(); return; }
+    lastTap = { n, t: now }; selectQ(n); return; }
   const pg = e.target.closest('.pg'); if (pg && !POS.length) askPage(+pg.dataset.p);
 });
 async function selectQ(n, { scrollPage = false } = {}) {
   const q = Q.find(x => x.n === n); if (!q) return;
+  if (partsOn != null && partsOn !== n) partsOn = null;
   active = n; $('#qsel').value = String(n);
   if (cur !== q.file) await openFile(q.file);
   goLine(q.line0, false); markQuestions(); drawBoxes();
@@ -356,6 +399,7 @@ function followCursor() {
   const l = ed.getCursor().line + 1, q = Q.find(x => x.file === cur && l >= x.line0 && l <= x.line1);
   const n = q ? q.n : null;
   if (n === active) return;
+  if (partsOn != null && partsOn !== n) partsOn = null;
   active = n; $('#qsel').value = n ? String(n) : ''; markQuestions(); drawBoxes();
   if (n) { const b = document.querySelector(`.qbox[data-n="${n}"]`); if (b) { const r = b.getBoundingClientRect(), box = $('#pages').getBoundingClientRect(); if (r.top < box.top || r.bottom > box.bottom) scrollToBox(n); } }
 }
