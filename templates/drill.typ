@@ -101,6 +101,7 @@
 // ── 문항 하나
 #let problem(dir, n, q) = if exam { block(breakable: false, width: 100%, below: 0mm)[
   #metadata((n: n, answer: q.answer)) <answer>
+  #context { let p = here().position(); [#metadata((n: n, page: p.page, x: p.x.pt(), y: p.y.pt(), w: page.width.pt(), h: page.height.pt())) <qpos>] }   // 편집기: 쪽에서 문항 위치
   #exam-meta(q)
   #set par(justify: false, leading: 0.6em)
   #grid(columns: (6.4mm, 1fr),
@@ -121,6 +122,7 @@
     ])
 ] } else { block(breakable: false, width: 100%, below: gap-q)[
   #metadata((n: n, answer: q.answer)) <answer>
+  #context { let p = here().position(); [#metadata((n: n, page: p.page, x: p.x.pt(), y: p.y.pt(), w: page.width.pt(), h: page.height.pt())) <qpos>] }   // 편집기: 쪽에서 문항 위치
   #q-head(n, q)
   #v(1.8mm)
   #set par(justify: false, leading: 0.66em)
