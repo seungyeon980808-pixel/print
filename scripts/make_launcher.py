@@ -8,7 +8,7 @@ d = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else ".")
 mac = os.path.join(d, "편집기 열기.command")
 with open(mac, "w", encoding="utf-8", newline="\n") as f:
     f.write("""#!/bin/bash
-# print 편집기 열기 — 이 창은 편집하는 동안 켜 두세요(닫으면 편집기가 꺼집니다)
+# 5E_print 편집기 열기 — 이 창은 편집하는 동안 켜 두세요(닫으면 편집기가 꺼집니다)
 cd "$(dirname "$0")"
 PY=$(command -v python3 || command -v python)
 if [ -z "$PY" ]; then echo "Python 3이 없습니다. AI에게 「편집기 열어 줘」라고 하면 설치해 줍니다."; read -n 1; exit 1; fi
@@ -23,7 +23,7 @@ win = os.path.join(d, "편집기 열기.bat")
 with open(win, "w", encoding="utf-8", newline="\r\n") as f:
     f.write("""@echo off
 chcp 65001 >nul
-rem print 편집기 열기 - 이 창은 편집하는 동안 켜 두세요(닫으면 편집기가 꺼집니다)
+rem 5E_print 편집기 열기 - 이 창은 편집하는 동안 켜 두세요(닫으면 편집기가 꺼집니다)
 cd /d "%~dp0"
 where typst >nul 2>nul || (echo Typst가 없습니다. AI에게 "편집기 열어 줘"라고 하면 설치해 줍니다. & pause & exit /b 1)
 start "" "http://localhost:8950"
