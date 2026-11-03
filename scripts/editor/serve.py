@@ -21,6 +21,8 @@ if not os.path.exists(os.path.join(ROOT, "책.typ")):
 CACHE = os.path.join(os.path.expanduser("~/.cache/print/preview"), hashlib.md5(ROOT.encode()).hexdigest()[:10])
 os.makedirs(CACHE, exist_ok=True)
 
+# 새 폴더 구조(자료폴더/작업/원본)면 자료 폴더 이름을 책 이름으로
+BOOK = os.path.basename(os.path.dirname(os.path.dirname(ROOT))) if os.path.basename(os.path.dirname(ROOT)) == "작업" else (os.path.basename(os.path.dirname(ROOT)) or os.path.basename(ROOT))
 S = {"ver": 0, "target": "책.typ", "pages": 0, "error": None, "ms": 0, "busy": False, "changed": {}, "files_ver": 0}
 lock = threading.Lock()
 
@@ -115,7 +117,7 @@ class H(BaseHTTPRequestHandler):
                 return self.send(200, open(os.path.join(HERE, "index.html"), encoding="utf-8").read(), "text/html; charset=utf-8")
             if u.path == "/api/state":
                 with lock:
-                    return self.send(200, {k: S[k] for k in ("ver", "target", "pages", "error", "ms", "busy", "files_ver")} | {"book": os.path.basename(os.path.dirname(ROOT)) or os.path.basename(ROOT), "root": ROOT})
+                    return self.send(200, {k: S[k] for k in ("ver", "target", "pages", "error", "ms", "busy", "files_ver")} | {"book": BOOK, "root": ROOT})
             if u.path == "/api/files":
                 return self.send(200, files())
             if u.path == "/api/file":
@@ -139,6 +141,11 @@ class H(BaseHTTPRequestHandler):
                 p = inside(rel)
                 with open(p, "w", encoding="utf-8") as f: f.write(body.decode("utf-8"))
                 return self.send(200, {"mtime": os.stat(p).st_mtime_ns})
+            if u.path == "/api/export":   # 「PDF 저장」: build.py --next로 새 버전을 결과/에
+                r = subprocess.run([sys.executable, os.path.join(HERE, "..", "build.py"), ROOT, "--next"], capture_output=True, text=True)
+                made = [l[4:].strip() for l in r.stdout.splitlines() if l.startswith("만듦:")]
+                if r.returncode or not made: raise ValueError((r.stderr or r.stdout).strip()[-800:] or "PDF를 만들지 못했습니다")
+                return self.send(200, {"files": [os.path.basename(x) for x in made], "dir": os.path.dirname(made[0])})
             if u.path == "/api/target":
                 rel = q["p"][0]; inside(rel)
                 with lock: S["target"] = rel; S["force"] = True

@@ -9,7 +9,7 @@
 #let rule = 0.8pt + black  // 굵은 선
 
 #let gap-q = 8mm           // 문항 사이 최소 여백(남는 높이는 풀이 공간으로 더 벌어짐)
-#let gap-m = 2.4mm         // 발문 · 자료 · 보기 · 선지 사이
+#let gap-m = if brand.at("head", default: "b") == "exam" { 1.8mm } else { 2.4mm }         // 발문 · 자료 · 보기 · 선지 사이
 #let col-gap = 12mm
 
 // 문항 표시: content.typ에서 tag: "기출" · "기출변형" · "제작", 어려우면 star: true(도전)
@@ -61,21 +61,22 @@
 }
 
 // ── <보기>: 위 선 가운데에 글자를 얹는 평가원 방식
-#let bogi(items) = block(width: 100%, inset: (top: 4mm, bottom: 3.4mm, x: 4mm), stroke: hair, radius: rad(0mm))[
-  #place(top + center, dy: -4mm - 0.55em, box(fill: white, inset: (x: 1.8mm), text(font: sans, size: 7.8pt, tracking: 2pt)[〈보기〉]))
+#let bogi(items) = block(width: 100%, inset: if brand.at("head", default: "b") == "exam" { (top: 3.4mm, bottom: 2.6mm, x: 2.6mm) } else { (top: 4mm, bottom: 3.4mm, x: 4mm) }, stroke: hair, radius: rad(0mm))[
+  #place(top + center, dy: (if brand.at("head", default: "b") == "exam" { -3.4mm - 0.35em } else { -4mm - 0.55em }), box(fill: white, inset: (x: 1.8mm), text(font: sans, size: 7.8pt, tracking: 2pt)[〈보기〉]))
   #set par(leading: 0.72em, justify: false)
-  #grid(columns: (5.6mm, 1fr), row-gutter: 2.6mm,
+  #grid(columns: (if brand.at("head", default: "b") == "exam" { 4.8mm } else { 5.6mm }, 1fr), row-gutter: if brand.at("head", default: "b") == "exam" { 1.8mm } else { 2.6mm },
     ..items.enumerate().map(((i, t)) => ([#("ㄱㄴㄷㄹ".clusters().at(i)).], t)).flatten())
 ]
 
 // ── 선지: 짧으면 한 줄 다섯 칸, 길면 세 칸 + 두 칸
 #let marks = ("①", "②", "③", "④", "⑤")
 #let choices(cs) = {
-  let n = cs.map(c => c.clusters().len())
+  let n = cs.map(c => if type(c) == str { c.clusters().len() } else { 4 })
   set par(justify: false)
   let item(i) = box[#marks.at(i)#h(1.2mm)#cs.at(i)]
   // 문장 선지(14자 넘음)는 한 줄에 하나, 조금 길면 세 칸 + 두 칸, 짧으면 한 줄 다섯 칸
-  if n.any(k => k > 14) { stack(spacing: 1.8mm, ..range(5).map(i => [#marks.at(i)#h(1.2mm)#cs.at(i)])) }
+  if n.all(k => k <= 7) and n.sum() <= 24 { block(width: 100%)[#range(5).map(item).join(h(1fr))] }
+  else if n.any(k => k > 14) { stack(spacing: 1.8mm, ..range(5).map(i => [#marks.at(i)#h(1.2mm)#cs.at(i)])) }
   else if n.any(k => k > 8) { grid(columns: (1fr, 1fr), row-gutter: 1.6mm, ..range(5).map(item)) }
   else if n.any(k => k > 4) { grid(columns: (1fr,) * 3, row-gutter: 1.6mm, ..range(5).map(item)) }
   else { block(width: 100%)[#range(5).map(item).join(h(1fr))] }
@@ -93,8 +94,32 @@
   grid(columns: (6mm, 1fr), row-gutter: if answer-box == "space" { 10mm } else { 4mm }, ..rows.flatten())
 }
 
+// ── 시험지형(brand.head: "exam"): 번호 「1.」을 왼쪽에 걸고 발문을 들여 씀. 표시 · 출처는 위의 작은 한 줄
+#let exam = brand.head == "exam"
+#let exam-meta(q) = block(below: 1.4mm, text(size: 6.6pt)[#tag-chip(q.at("tag", default: "기출"))#if q.at("star", default: false) [#h(1mm)#chip("도전", filled: true)]#h(1.6mm)#text(font: sans, size: 6.8pt, fill: gray, q.source)])
+
 // ── 문항 하나
-#let problem(dir, n, q) = block(breakable: false, width: 100%, below: gap-q)[
+#let problem(dir, n, q) = if exam { block(breakable: false, width: 100%, below: 0mm)[
+  #metadata((n: n, answer: q.answer)) <answer>
+  #exam-meta(q)
+  #set par(justify: false, leading: 0.6em)
+  #grid(columns: (6.4mm, 1fr),
+    text(font: sans, weight: "bold", size: 11.5pt, top-edge: "cap-height", bottom-edge: "baseline")[#n.],
+    [
+      #if "material" in q and q.material.at("side", default: none) != none {
+        grid(columns: (1fr, q.material.side), column-gutter: 3mm, align: (left + top, right + top),
+          q.lead, image(dir + "/" + q.material.file, width: q.material.side))
+      } else [
+        #q.lead
+        #if "material" in q [#v(gap-m)#material(dir, q.material)]
+      ]
+      #v(gap-m)
+      #q.ask#if "points" in q [ #text(font: sans, size: 8pt)[[#q.points;점]]]
+      #if "bogi" in q [#v(gap-m)#bogi(q.bogi)]
+      #v(gap-m)
+      #if "parts" in q { short-answers(q.parts) } else { choices(q.choices) }
+    ])
+] } else { block(breakable: false, width: 100%, below: gap-q)[
   #metadata((n: n, answer: q.answer)) <answer>
   #q-head(n, q)
   #v(1.8mm)
@@ -106,7 +131,7 @@
   #if "bogi" in q [#v(gap-m)#bogi(q.bogi)]
   #v(gap-m)
   #if "parts" in q { short-answers(q.parts) } else { choices(q.choices) }
-]
+] }
 
 // ── 첫 쪽 제목(3가지 모양)
 #let name-field() = if brand.name-field == "none" { [] } else if brand.name-field == "name" {
@@ -116,10 +141,26 @@
 }
 #let core-line(summary) = text(font: sans, size: 7.6pt)[#text(weight: "bold", fill: brand.accent)[핵심]#h(2.5mm)#summary.join(h(2mm) + text(fill: gray)[|] + h(2mm))]
 
+// 시험지형 첫 쪽 머리(개념편 concept.typ도 같이 씀)
+#let exam-title(info, summary, side, kind, label: [핵심]) = {
+  block(width: 100%, inset: (y: 2mm), stroke: (top: 1.6pt + black, bottom: 0.6pt + black),
+    grid(columns: (1fr, auto, 1fr), align: (left + horizon, center + horizon, right + horizon),
+      [#box(fill: brand.accent, inset: (x: 2mm, y: 1.1mm), radius: rad(0.5mm), text(font: sans, weight: "bold", size: 8pt, fill: white, tracking: 1pt)[파트 #info.no]) #h(1.6mm) #text(font: sans, size: 6.8pt, fill: gray)[#info.series]],
+      text(font: sans, weight: "bold", size: 16pt, tracking: 0.22em, info.title),
+      [#text(font: sans, size: 6.8pt, fill: gray)[#info.school #info.course] #h(1.6mm) #text(font: sans, weight: "bold", size: 9pt, tracking: 0.3em, fill: brand.accent, kind)]))
+  v(1.6mm)
+  grid(columns: (1fr, auto), align: (left + horizon, right + horizon), column-gutter: 4mm,
+    text(font: sans, size: 7.6pt)[#text(weight: "bold", fill: brand.accent)[#label]#h(2.5mm)#summary.join(h(2mm) + text(fill: gray)[|] + h(2mm))],
+    side)
+  v(1.4mm); line(length: 100%, stroke: hair); v(3mm)
+}
+
 #let title-block(info, summary, teacher, head) = {
   let side = if teacher { text(font: sans, size: 9pt, weight: "bold")[정답과 해설] } else { name-field() }
   let byline = text(font: sans, size: 7.2pt, fill: gray, tracking: 0.6pt)[#info.school #info.course#h(2mm)·#h(2mm)#brand.org #brand.author #brand.role]
-  if head == "a" {
+  if head == "exam" {
+    exam-title(info, summary, side, if teacher [정답과 해설] else [문항])
+  } else if head == "a" {
     // 띠형: 맨 위 포인트 색 띠, 큰 제목, 굵은 선, 핵심 줄
     block(width: 100%, height: 1.6mm, fill: brand.accent)
     v(3.2mm)
@@ -261,6 +302,22 @@
   }
 })
 
+// 시험지형 이어지는 쪽 머리: 왼쪽 파트 이름 · 가운데 굵은 윗선 띠 · 오른쪽 소속 · 이름
+#let exam-header(info, kind) = {
+  set text(font: sans, size: 7.4pt, fill: gray)
+  block(width: 100%, inset: (y: 1.4mm), stroke: (top: 1.2pt + black, bottom: 0.4pt + black),
+    grid(columns: (1fr, auto, 1fr), align: (left + horizon, center + horizon, right + horizon),
+      [#text(fill: brand.accent, weight: "bold")[파트 #info.no]#h(2mm)#info.title],
+      text(fill: black, weight: "bold", tracking: 0.25em, kind),
+      [#brand.org #text(weight: "bold")[#brand.author]]))
+}
+// 쪽 번호: 시험지형은 아래 가운데 상자, 그 밖은 오른쪽 아래(쪽 아래 한마디와 함께)
+#let exam-footer(p) = if exam {
+  align(center, box(stroke: 0.6pt + black, radius: rad(0.5mm), inset: (x: 2.4mm, y: 1.2mm), text(font: sans, size: 9pt, weight: "bold", str(counter(page).get().first()))))
+} else {
+  align(right, [#saying(p)#text(font: sans, size: 10pt, weight: "bold", str(counter(page).get().first()))])   // 표지는 빼고 본문부터 1쪽
+}
+
 // 문항편 · 정답 쪽 공통 쪽 서식(글꼴 · 어절 줄바꿈 · 머리글 · 세로선 · 쪽 아래 한마디)
 #let page-doc(info, body) = {
   set text(font: serif, size: size, lang: "ko")
@@ -268,12 +325,14 @@
   show "<보기>": "〈\u{2060}보\u{2060}기\u{2060}〉"   // 줄 끝에서 쪼개지지 않게
   // 자간 맞춤: 양쪽 맞춤할 때 띄어쓰기만 벌리지 않고 글자 사이도 조금씩 줄이고 늘림(평가원 시험지처럼)
   set par(justification-limits: (spacing: (min: 75%, max: 130%), tracking: (min: -0.07em, max: 0.03em)))
-  show regex("[^\s]+"): box   // 어절 단위 줄바꿈(한글 프로그램·평가원 시험지와 같은 방식)
-  set page(paper: brand.paper, margin: (x: 20mm, top: 26mm, bottom: 16mm),
+  show regex("[^\s]*[가-힣][^\s]*"): box   // 어절 단위 줄바꿈(한글이 든 어절만 묶음: 수식은 건드리지 않음)(한글 프로그램·평가원 시험지와 같은 방식)
+  set page(paper: brand.paper, margin: if exam { (x: 16mm, top: 23mm, bottom: 15mm) } else { (x: 20mm, top: 26mm, bottom: 16mm) },
     // 위쪽: 왼쪽 학습지 이름, 오른쪽 쪽 번호(첫 쪽은 머리 대신 제목)
     header: context {
       let p = here().page()
-      if header-style != "none" and not sec-on(p, ("start", "cstart")) {
+      if header-style != "none" and not sec-on(p, ("start", "cstart")) and exam {
+        exam-header(info, if last-sec(p) == "ans" [정답과 해설] else [문항])
+      } else if header-style != "none" and not sec-on(p, ("start", "cstart")) {
         set text(font: sans, size: 7.4pt, fill: gray)
         grid(columns: (1fr, auto), align: bottom,
           [#text(fill: brand.accent, weight: "bold")[#info.series #num(info.no)]#h(2mm)#info.title],
@@ -285,7 +344,7 @@
       // 문항 쪽에만 가운데 세로선(정답 쪽부터는 없음). 파트 첫 쪽은 제목 아래부터
       let p = here().page()
       if last-sec(p) == "start" {
-        let y0 = if sec-on(p, ("start",)) { 52mm } else { 28mm }
+        let y0 = if sec-on(p, ("start",)) { if exam { 42mm } else { 52mm } } else { 28mm }
         place(top + center, dy: y0, line(angle: 90deg, length: page.height - y0 - 22mm, stroke: hair))
       }
     },
@@ -295,7 +354,7 @@
       let p = here().page()
       // 파트 첫 쪽은 머리글이 없으므로 쪽 번호를 아래 왼쪽에
       // 오른쪽 아래: 잔소리 한 줄 + 쪽 번호
-      align(right, [#saying(p)#text(font: sans, size: 10pt, weight: "bold", str(counter(page).get().first()))])   // 표지는 빼고 본문부터 1쪽
+      exam-footer(p)
     },
   )
   body
@@ -324,9 +383,24 @@
     if k > 0 { pagebreak() }
     // 쪽을 칸(왼쪽 단 위→아래, 오른쪽 단 위→아래)으로 나눠 문항 시작 높이를 맞춤. 칸의 남는 높이가 풀이 공간
     let cell(j) = if j < chunk.len() { fit-cell(problem(dir, start + k * per-page + j, chunk.at(j))) } else { [] }
-    // 행 높이 1fr = 그 쪽에 남은 높이를 고르게(첫 쪽은 제목 아래만)
-    grid(columns: (1fr, 1fr), rows: (1fr,) * rows, column-gutter: col-gap, row-gutter: 6mm,
-      ..range(rows).map(r => (cell(r), cell(r + rows))).flatten())
+    if exam {
+      // 시험지형: 줄마다 좌우 문항을 나란히(시작 높이 맞춤) 놓고, 남은 높이는 줄 아래마다 고르게 나눠 풀이 공간으로
+      for r in range(rows) {
+        let pr(j) = if j < chunk.len() { problem(dir, start + k * per-page + j, chunk.at(j)) } else { [] }
+        grid(columns: (1fr, 1fr), column-gutter: col-gap, pr(r), pr(r + rows))
+        v(4mm)   // 문항 사이 최소 여백
+        v(1fr)
+      }
+    } else {
+    // 칸 높이를 직접 정한다: 1fr로 두면 첫 쪽에서 제목 띠 높이를 빼지 않아 칸이 실제보다 크게 잡히고, 「칸 넘침」 검사를 지나 쪽 밖으로 잘린다
+    context {
+      let body-h = page.height - 26mm - 16mm
+      let title-h = if concepts != none { 0mm } else { measure(block(width: page.width - 40mm, title-block(info, summary, teacher, head))).height - 9mm + 2mm }
+      let avail = if k == 0 { body-h - title-h } else { body-h } - 1mm
+      block(width: 100%, height: avail, breakable: false, above: 0pt, below: 0pt, grid(columns: (1fr, 1fr), rows: (1fr,) * rows, column-gutter: col-gap, row-gutter: 6mm,
+        ..range(rows).map(r => (cell(r), cell(r + rows))).flatten()))
+    }
+    }
   }
   if answers-at == "part" {
     pagebreak()

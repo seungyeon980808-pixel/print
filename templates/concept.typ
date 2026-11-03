@@ -1,6 +1,6 @@
 // 개념편 공통 서식(파트마다 따로 배부). 쪽 규칙은 drill.typ와 같다: 위 오른쪽 쪽 번호, 아래 오른쪽 잔소리.
 // 원칙: 내용은 두 단에 이어서 흘러 빈 공간을 만들지 않는다. 정답은 맨 뒤 한 곳.
-#import "drill.typ": brand, sans, serif, size, gray, hair, rule, col-gap, key, num, sec-on, name-field, saying, rad, header-style
+#import "drill.typ": brand, sans, serif, size, gray, hair, rule, col-gap, key, num, sec-on, name-field, saying, rad, header-style, exam, exam-title, exam-header, exam-footer
 
 // 개념 상자: 단·쪽을 넘어 나뉠 수 있게. 제목은 내용과 붙어 다님
 #let concept-box(title, body) = block(width: 100%, breakable: true, below: 6mm)[
@@ -100,11 +100,12 @@
   show "<보기>": "〈\u{2060}보\u{2060}기\u{2060}〉"
   // 자간 맞춤: 양쪽 맞춤할 때 띄어쓰기만 벌리지 않고 글자 사이도 조금씩 줄이고 늘림(평가원 시험지처럼)
   set par(justification-limits: (spacing: (min: 75%, max: 130%), tracking: (min: -0.07em, max: 0.03em)))
-  show regex("[^\s]+"): box   // 어절 단위 줄바꿈
-  set page(paper: brand.paper, margin: (x: 20mm, top: 26mm, bottom: 16mm),
+  show regex("[^\s]*[가-힣][^\s]*"): box   // 어절 단위 줄바꿈(한글이 든 어절만 묶음: 수식은 건드리지 않음)
+  set page(paper: brand.paper, margin: if exam { (x: 16mm, top: 23mm, bottom: 15mm) } else { (x: 20mm, top: 26mm, bottom: 16mm) },
     header: context {
       let p = here().page()
-      if header-style != "none" and not sec-on(p, ("start", "cstart")) {
+      if header-style != "none" and not sec-on(p, ("start", "cstart")) and exam { exam-header(info, [개념]) }
+      else if header-style != "none" and not sec-on(p, ("start", "cstart")) {
         set text(font: sans, size: 7.4pt, fill: gray)
         grid(columns: (1fr, auto), align: bottom,
           [#text(fill: brand.accent, weight: "bold")[#info.series #num(info.no) 개념편]#h(2mm)#info.title],
@@ -114,7 +115,7 @@
     },
     background: context {
       let p = here().page()
-      let y0 = if sec-on(p, ("cstart",)) { 52mm } else { 28mm }
+      let y0 = if sec-on(p, ("cstart",)) { if exam { 42mm } else { 52mm } } else { 28mm }
       place(top + center, dy: y0, line(angle: 90deg, length: page.height - y0 - 22mm, stroke: hair))
     },
     footer-descent: 5mm,
@@ -122,12 +123,13 @@
       let p = here().page()
       // 파트 첫 쪽은 머리글이 없으므로 쪽 번호를 아래 왼쪽에
       // 오른쪽 아래: 잔소리 한 줄 + 쪽 번호
-      align(right, [#saying(p)#text(font: sans, size: 10pt, weight: "bold", str(counter(page).get().first()))])   // 표지는 빼고 본문부터 1쪽
+      exam-footer(p)
     },
   )
   set list(marker: text(fill: brand.accent)[•], indent: 0mm, body-indent: 2mm, spacing: 1.6mm)
   [#metadata(("cstart", info.no)) <sec>]
   v(-9mm)
+  if exam { exam-title(info, info.goals, name-field(), [개념], label: [이 파트에서]) } else {
   grid(columns: (17mm, 1fr), column-gutter: 4mm,
     block(width: 17mm, height: 19mm, fill: brand.accent, inset: 2mm)[
       #set align(center + horizon)
@@ -145,5 +147,6 @@
   v(1.8mm)
   line(length: 100%, stroke: hair)
   v(4mm)
+  }
   columns(2, gutter: col-gap, body)
 }

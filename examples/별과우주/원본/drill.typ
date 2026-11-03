@@ -320,13 +320,18 @@
   title-block(info, summary, teacher, head)
   if concepts != none { concept-page(info, concepts); pagebreak() }
   let rows = calc.ceil(per-page / 2)
-  for (k, chunk) in questions.chunks(per-page).enumerate() {
-    if k > 0 { pagebreak() }
-    // 쪽을 칸(왼쪽 단 위→아래, 오른쪽 단 위→아래)으로 나눠 문항 시작 높이를 맞춤. 칸의 남는 높이가 풀이 공간
-    let cell(j) = if j < chunk.len() { fit-cell(problem(dir, start + k * per-page + j, chunk.at(j))) } else { [] }
-    // 행 높이 1fr = 그 쪽에 남은 높이를 고르게(첫 쪽은 제목 아래만)
-    grid(columns: (1fr, 1fr), rows: (1fr,) * rows, column-gutter: col-gap, row-gutter: 6mm,
-      ..range(rows).map(r => (cell(r), cell(r + rows))).flatten())
+  // 칸 높이를 직접 정한다: 1fr로 두면 첫 쪽에서 제목 띠 높이를 빼지 않아 칸이 실제보다 크게 잡히고, 「칸 넘침」 검사를 지나 쪽 밖으로 잘린다
+  context {
+    let body-h = page.height - 26mm - 16mm
+    let title-h = if concepts != none { 0mm } else { measure(block(width: page.width - 40mm, title-block(info, summary, teacher, head))).height - 9mm + 2mm }
+    for (k, chunk) in questions.chunks(per-page).enumerate() {
+      if k > 0 { pagebreak() }
+      // 쪽을 칸(왼쪽 단 위→아래, 오른쪽 단 위→아래)으로 나눠 문항 시작 높이를 맞춤. 칸의 남는 높이가 풀이 공간
+      let cell(j) = if j < chunk.len() { fit-cell(problem(dir, start + k * per-page + j, chunk.at(j))) } else { [] }
+      let avail = if k == 0 { body-h - title-h } else { body-h } - 1mm
+      block(width: 100%, height: avail, breakable: false, above: 0pt, below: 0pt, grid(columns: (1fr, 1fr), rows: (1fr,) * rows, column-gutter: col-gap, row-gutter: 6mm,
+        ..range(rows).map(r => (cell(r), cell(r + rows))).flatten()))
+    }
   }
   if answers-at == "part" {
     pagebreak()

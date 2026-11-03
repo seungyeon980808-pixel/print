@@ -26,7 +26,7 @@
   header: "full",                   // 머리글: "full" · "title" 파트 이름만 · "none"
   name-field: "full",               // 학생 이름 칸: "full" 반·번호·이름 · "name" 이름만 · "none"
   grade-label: "2학년",             // 이름 칸 앞 학년
-  head: "b",                        // 문항편 첫 쪽 머리: "a" 띠형 · "b" 세로 탭형 · "c" 숫자형
+  head: "b",                        // 문항편 첫 쪽 머리: "a" 띠형 · "b" 세로 탭형 · "c" 숫자형 · "exam" 시험지형(평가원식: 번호를 왼쪽에 걸고 위아래 굵은 선 머리, 쪽 번호 상자)
 
   // ── 표지(cover.typ가 읽음). 큰 그림은 표지그림.typ
   cover: (
