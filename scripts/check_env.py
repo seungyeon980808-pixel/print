@@ -47,7 +47,8 @@ except ImportError:
 fams = subprocess.run(["typst", "fonts", "--font-path", FONTS], capture_output=True, text=True).stdout if typst else ""
 ok("Pretendard", "Pretendard" in fams, "저장소 fonts/에 들어 있음")
 serif = "KoPub Batang" in fams
-ok("serif", serif or "Noto Serif KR" in fams, "KoPub 바탕" if serif else ("KoPub 바탕 없음 → Noto Serif KR로 대신" if "Noto Serif KR" in fams else "본문 명조 글꼴 없음"))
+alt = next((f for f in ("Noto Serif KR", "Batang", "AppleMyungjo") if f in fams), None)   # 윈도우 기본 「바탕」도 됨
+ok("serif", serif or alt is not None, "KoPub 바탕" if serif else (f"KoPub 바탕 없음 → {alt}로 대신" if alt else "본문 명조 글꼴 없음"))
 if "serif" not in problems and not serif:
     print("    본문 글꼴을 「별과 우주」와 똑같이 하려면:", FIX["serif"][OS])
 print(f"  · git {'있음' if shutil.which('git') else '없음(스킬 받기에 필요)'}")

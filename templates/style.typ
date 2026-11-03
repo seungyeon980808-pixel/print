@@ -7,8 +7,8 @@
 #let brand = base + (accent: if tone == "흑백" { luma(35) } else { base.accent })
 
 #let font-style = opt("font", "serif")              // "serif" 명조 본문 + 고딕 제목 · "sans" 고딕만 · "allserif" 명조만
-#let serif-fonts = ("KoPub Batang", "Noto Serif KR", "AppleMyungjo")
-#let sans-fonts = ("Pretendard", "Noto Sans KR", "Apple SD Gothic Neo")
+#let serif-fonts = ("KoPub Batang", "Noto Serif KR", "AppleMyungjo", "Batang", "바탕")   // 윈도우 기본: 바탕
+#let sans-fonts = ("Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕")
 #let serif = if font-style == "sans" { sans-fonts } else { serif-fonts }   // 본문
 #let sans = if font-style == "allserif" { serif-fonts } else { sans-fonts }  // 번호 · 제목 · 표 머리
 
