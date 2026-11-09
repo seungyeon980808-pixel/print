@@ -1,0 +1,1347 @@
+{
+  "version": "imyong-topics-v1",
+  "description": "원문 용어로 자동 분류한 학습용 주제. 공식 출제영역이나 확정 단원 분류가 아닙니다. 복수 주제를 허용합니다.",
+  "units": [
+    {
+      "id": "t_physics.mechanics",
+      "subject": "t_physics",
+      "label": "고전역학",
+      "topics": [
+        {
+          "id": "t_physics.mechanics.motion",
+          "label": "운동학·힘·에너지",
+          "keywords": [
+            "속도",
+            "가속도",
+            "운동량",
+            "뉴턴 운동",
+            "운동 법칙",
+            "포물선",
+            "마찰",
+            "역학적 에너지",
+            "일 에너지",
+            "탄성 충돌",
+            "비탄성 충돌"
+          ]
+        },
+        {
+          "id": "t_physics.mechanics.rotation",
+          "label": "회전·강체·중심력",
+          "keywords": [
+            "관성 모멘트",
+            "관성모멘트",
+            "각운동량",
+            "돌림힘",
+            "토크",
+            "중심력",
+            "케플러",
+            "회전축",
+            "강체"
+          ]
+        },
+        {
+          "id": "t_physics.mechanics.analytical",
+          "label": "해석역학·진동",
+          "keywords": [
+            "라그랑",
+            "해밀턴",
+            "일반화 좌표",
+            "단진",
+            "조화 진동",
+            "고유 진동",
+            "연성 진동",
+            "진동자"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_physics.em",
+      "subject": "t_physics",
+      "label": "전자기학",
+      "topics": [
+        {
+          "id": "t_physics.em.electric",
+          "label": "정전기·전기장·전위",
+          "keywords": [
+            "전기장",
+            "전위",
+            "전하",
+            "가우스",
+            "유전체",
+            "축전기",
+            "전기 쌍극자"
+          ]
+        },
+        {
+          "id": "t_physics.em.magnetic",
+          "label": "자기장·전자기 유도",
+          "keywords": [
+            "자기장",
+            "자기 선속",
+            "자속",
+            "투자율",
+            "비오",
+            "앙페르",
+            "패러데이",
+            "전자기 유도",
+            "로런츠",
+            "자화"
+          ]
+        },
+        {
+          "id": "t_physics.em.circuit",
+          "label": "회로·교류·전자기파",
+          "keywords": [
+            "전기 회로",
+            "회로",
+            "교류",
+            "저항",
+            "인덕",
+            "임피던스",
+            "맥스웰",
+            "전자기파",
+            "변위 전류"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_physics.quantum",
+      "subject": "t_physics",
+      "label": "양자역학",
+      "topics": [
+        {
+          "id": "t_physics.quantum.wave",
+          "label": "파동함수·슈뢰딩거 방정식",
+          "keywords": [
+            "파동 함수",
+            "파동함수",
+            "슈뢰딩거",
+            "고유 함수",
+            "고유함수",
+            "확률 밀도",
+            "무한 우물",
+            "퍼텐셜 우물",
+            "불확정성"
+          ]
+        },
+        {
+          "id": "t_physics.quantum.operators",
+          "label": "연산자·각운동량·스핀",
+          "keywords": [
+            "연산자",
+            "교환자",
+            "스핀",
+            "스피노르",
+            "해밀토니안",
+            "고유값",
+            "파울리",
+            "각운동량 양자수",
+            "해밀토니언",
+            "고윳값",
+            "바닥상태"
+          ]
+        },
+        {
+          "id": "t_physics.quantum.applications",
+          "label": "터널링·수소 원자·섭동",
+          "keywords": [
+            "터널",
+            "투과율",
+            "에너지 장벽",
+            "수소 원자",
+            "수소원자",
+            "섭동",
+            "제만",
+            "보어 반지름",
+            "퍼텐셜 장벽",
+            "투과 확률"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_physics.thermal",
+      "subject": "t_physics",
+      "label": "열·통계물리",
+      "topics": [
+        {
+          "id": "t_physics.thermal.thermo",
+          "label": "열역학 법칙·열기관",
+          "keywords": [
+            "열역학",
+            "엔트로피",
+            "카르노",
+            "열기관",
+            "내부 에너지",
+            "내부에너지",
+            "열용량",
+            "단열",
+            "등온",
+            "이상 기체"
+          ]
+        },
+        {
+          "id": "t_physics.thermal.statistics",
+          "label": "통계역학·분포·분배함수",
+          "keywords": [
+            "분배 함수",
+            "분배함수",
+            "볼츠만",
+            "페르미",
+            "보스",
+            "통계 역학",
+            "통계역학",
+            "상태 밀도",
+            "화학 퍼텐셜"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_physics.waves",
+      "subject": "t_physics",
+      "label": "파동·광학",
+      "topics": [
+        {
+          "id": "t_physics.waves.wave",
+          "label": "진동·파동·음파",
+          "keywords": [
+            "파동",
+            "정상파",
+            "정지파",
+            "음파",
+            "도플러",
+            "진동수",
+            "파장",
+            "전파 속력"
+          ]
+        },
+        {
+          "id": "t_physics.waves.optics",
+          "label": "기하·파동광학",
+          "keywords": [
+            "간섭",
+            "회절",
+            "편광",
+            "굴절",
+            "렌즈",
+            "거울",
+            "프리즘",
+            "광학",
+            "광경로",
+            "슬릿"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_physics.modern",
+      "subject": "t_physics",
+      "label": "현대물리·물성·실험",
+      "topics": [
+        {
+          "id": "t_physics.modern.relativity",
+          "label": "상대성이론",
+          "keywords": [
+            "상대성",
+            "로런츠 변환",
+            "시간 지연",
+            "길이 수축",
+            "시공간"
+          ]
+        },
+        {
+          "id": "t_physics.modern.atomic",
+          "label": "원자·핵·입자",
+          "keywords": [
+            "원자핵",
+            "핵반응",
+            "핵분열",
+            "방사성",
+            "붕괴",
+            "결합 에너지",
+            "광전 효과",
+            "콤프턴",
+            "보어 모형",
+            "원자 스펙트럼"
+          ]
+        },
+        {
+          "id": "t_physics.modern.solid",
+          "label": "고체·반도체·계측",
+          "keywords": [
+            "반도체",
+            "띠틈",
+            "에너지 띠",
+            "초전도",
+            "홀 효과",
+            "결정 격자",
+            "브래그",
+            "트랜지스터",
+            "다이오드",
+            "측정 불확도",
+            "오실로스코프"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_physics.other",
+      "subject": "t_physics",
+      "label": "기타·미분류",
+      "topics": [
+        {
+          "id": "t_physics.other.unclassified",
+          "label": "주제 미분류 문항",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "id": "t_chemistry.structure",
+      "subject": "t_chemistry",
+      "label": "원자·분자 구조",
+      "topics": [
+        {
+          "id": "t_chemistry.structure.atom",
+          "label": "원자 구조·양자화학",
+          "keywords": [
+            "오비탈",
+            "궤도 함수",
+            "궤도함수",
+            "양자수",
+            "슈뢰딩거",
+            "파동 함수",
+            "파동함수",
+            "원자 구조",
+            "원자구조",
+            "전자 배치",
+            "전자배치",
+            "유효 핵전하"
+          ]
+        },
+        {
+          "id": "t_chemistry.structure.bond",
+          "label": "화학 결합·분자 대칭",
+          "keywords": [
+            "분자 궤도",
+            "분자궤도",
+            "혼성",
+            "점군",
+            "분자 대칭",
+            "결합 차수",
+            "결합차수",
+            "VSEPR",
+            "루이스 구조",
+            "분자 구조"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chemistry.physical",
+      "subject": "t_chemistry",
+      "label": "물리화학",
+      "topics": [
+        {
+          "id": "t_chemistry.physical.thermo",
+          "label": "열역학·상평형",
+          "keywords": [
+            "엔탈피",
+            "엔트로피",
+            "깁스",
+            "자유 에너지",
+            "자유에너지",
+            "열역학",
+            "증기압",
+            "상평형",
+            "화학 퍼텐셜",
+            "상전이"
+          ]
+        },
+        {
+          "id": "t_chemistry.physical.equilibrium",
+          "label": "화학평형·산염기",
+          "keywords": [
+            "평형 상수",
+            "평형상수",
+            "르샤틀리에",
+            "산 염기",
+            "산염기",
+            "완충",
+            "산 해리",
+            "짝산",
+            "짝염기",
+            "용해도곱",
+            "pH",
+            "pKa"
+          ]
+        },
+        {
+          "id": "t_chemistry.physical.kinetics",
+          "label": "반응속도·반응 메커니즘",
+          "keywords": [
+            "반응 속도",
+            "반응속도",
+            "속도 상수",
+            "속도상수",
+            "활성화 에너지",
+            "아레니우스",
+            "정상 상태",
+            "정상상태",
+            "반응 차수"
+          ]
+        },
+        {
+          "id": "t_chemistry.physical.electro",
+          "label": "전기화학",
+          "keywords": [
+            "전기 화학",
+            "전기화학",
+            "전지",
+            "전극",
+            "산화 환원",
+            "산화환원",
+            "네른스트",
+            "전기 분해",
+            "전기분해"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chemistry.organic",
+      "subject": "t_chemistry",
+      "label": "유기화학",
+      "topics": [
+        {
+          "id": "t_chemistry.organic.stereo",
+          "label": "구조·입체화학·방향족성",
+          "keywords": [
+            "입체",
+            "이성질체",
+            "카이랄",
+            "키랄",
+            "거울상",
+            "부분 입체",
+            "배치",
+            "방향족",
+            "휴켈",
+            "입체 중심"
+          ]
+        },
+        {
+          "id": "t_chemistry.organic.reaction",
+          "label": "유기반응·작용기",
+          "keywords": [
+            "친핵",
+            "친전자",
+            "치환 반응",
+            "제거 반응",
+            "첨가 반응",
+            "카보닐",
+            "카르보닐",
+            "알데하이드",
+            "케톤",
+            "알코올",
+            "알켄",
+            "알카인",
+            "할로젠화",
+            "아민",
+            "에스터"
+          ]
+        },
+        {
+          "id": "t_chemistry.organic.synthesis",
+          "label": "합성·분광 구조 분석",
+          "keywords": [
+            "합성 경로",
+            "합성 과정",
+            "역합성",
+            "그리냐르",
+            "알돌",
+            "디엘스",
+            "NMR",
+            "핵자기",
+            "적외선",
+            "질량 스펙트럼"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chemistry.inorganic",
+      "subject": "t_chemistry",
+      "label": "무기화학",
+      "topics": [
+        {
+          "id": "t_chemistry.inorganic.periodic",
+          "label": "주기성·고체·결정",
+          "keywords": [
+            "이온화 에너지",
+            "전자 친화도",
+            "주기율",
+            "결정 구조",
+            "결정구조",
+            "격자 에너지",
+            "이온 반지름",
+            "단위 세포",
+            "단위세포"
+          ]
+        },
+        {
+          "id": "t_chemistry.inorganic.coordination",
+          "label": "배위·전이금속·착물",
+          "keywords": [
+            "배위",
+            "착물",
+            "리간드",
+            "전이 금속",
+            "전이금속",
+            "결정장",
+            "리간드장",
+            "결정 장",
+            "배위장",
+            "금속 착화합물"
+          ]
+        },
+        {
+          "id": "t_chemistry.inorganic.organometal",
+          "label": "유기금속·촉매",
+          "keywords": [
+            "유기 금속",
+            "유기금속",
+            "금속 카보닐",
+            "촉매",
+            "산화 첨가",
+            "환원 제거",
+            "18전자"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chemistry.analytical",
+      "subject": "t_chemistry",
+      "label": "분석화학·실험",
+      "topics": [
+        {
+          "id": "t_chemistry.analytical.wet",
+          "label": "적정·정량·오차",
+          "keywords": [
+            "적정",
+            "정량",
+            "표준 용액",
+            "표준용액",
+            "당량점",
+            "종말점",
+            "검출 한계",
+            "오차",
+            "유효 숫자",
+            "무게 분석"
+          ]
+        },
+        {
+          "id": "t_chemistry.analytical.instrument",
+          "label": "분광·분리·기기분석",
+          "keywords": [
+            "흡광",
+            "베르",
+            "람베르트",
+            "크로마토",
+            "전기 영동",
+            "질량 분석",
+            "형광",
+            "광전자",
+            "분광",
+            "분석 기기",
+            "검량선"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chemistry.other",
+      "subject": "t_chemistry",
+      "label": "기타·미분류",
+      "topics": [
+        {
+          "id": "t_chemistry.other.unclassified",
+          "label": "주제 미분류 문항",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "id": "t_biology.cell",
+      "subject": "t_biology",
+      "label": "세포생물학·생화학",
+      "topics": [
+        {
+          "id": "t_biology.cell.organelle",
+          "label": "세포 구조·막·수송",
+          "keywords": [
+            "세포막",
+            "세포 소기관",
+            "소포체",
+            "골지",
+            "리소좀",
+            "막단백질",
+            "막 단백질",
+            "능동 수송",
+            "능동수송",
+            "확산",
+            "삼투",
+            "세포 골격",
+            "세포골격"
+          ]
+        },
+        {
+          "id": "t_biology.cell.metabolism",
+          "label": "효소·대사·에너지",
+          "keywords": [
+            "효소",
+            "해당 과정",
+            "해당과정",
+            "TCA",
+            "시트르산",
+            "전자 전달",
+            "전자전달",
+            "산화적 인산화",
+            "광합성",
+            "엽록",
+            "ATP",
+            "미토콘드리아"
+          ]
+        },
+        {
+          "id": "t_biology.cell.signal",
+          "label": "세포 신호·분열·사멸",
+          "keywords": [
+            "신호 전달",
+            "신호전달",
+            "수용체",
+            "세포 주기",
+            "세포주기",
+            "체세포 분열",
+            "세포 분열",
+            "세포분열",
+            "세포 사멸",
+            "세포사멸",
+            "인산화효소"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_biology.genetics",
+      "subject": "t_biology",
+      "label": "유전학·분자생물학",
+      "topics": [
+        {
+          "id": "t_biology.genetics.heredity",
+          "label": "멘델유전·염색체·연관",
+          "keywords": [
+            "멘델",
+            "연관",
+            "재조합",
+            "유전 양식",
+            "유전양식",
+            "가계도",
+            "염색체",
+            "교배",
+            "우성",
+            "열성",
+            "유전자 지도"
+          ]
+        },
+        {
+          "id": "t_biology.genetics.expression",
+          "label": "DNA 복제·유전자 발현",
+          "keywords": [
+            "복제",
+            "전사",
+            "번역",
+            "프로모터",
+            "리보솜",
+            "오페론",
+            "스플라이싱",
+            "유전자 발현",
+            "유전자발현",
+            "히스톤"
+          ]
+        },
+        {
+          "id": "t_biology.genetics.biotech",
+          "label": "유전공학·생명공학",
+          "keywords": [
+            "PCR",
+            "중합 효소 연쇄",
+            "제한 효소",
+            "플라스미드",
+            "유전자 재조합",
+            "클로닝",
+            "전기 영동",
+            "전기영동",
+            "CRISPR",
+            "노던",
+            "서던",
+            "웨스턴",
+            "돌연변이"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_biology.animal",
+      "subject": "t_biology",
+      "label": "동물생리·면역",
+      "topics": [
+        {
+          "id": "t_biology.animal.neural",
+          "label": "신경·감각·근육",
+          "keywords": [
+            "뉴런",
+            "신경",
+            "활동 전위",
+            "활동전위",
+            "시냅스",
+            "근육",
+            "근수축",
+            "막전위",
+            "막 전위",
+            "감각"
+          ]
+        },
+        {
+          "id": "t_biology.animal.homeostasis",
+          "label": "내분비·순환·호흡·배설",
+          "keywords": [
+            "호르몬",
+            "내분비",
+            "항상성",
+            "혈압",
+            "심장",
+            "혈액",
+            "호흡",
+            "신장",
+            "네프론",
+            "여과",
+            "소화",
+            "삼투압"
+          ]
+        },
+        {
+          "id": "t_biology.animal.immune",
+          "label": "면역·감염",
+          "keywords": [
+            "면역",
+            "항체",
+            "항원",
+            "림프구",
+            "백신",
+            "보체",
+            "T 세포",
+            "B 세포",
+            "바이러스",
+            "병원체"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_biology.plant",
+      "subject": "t_biology",
+      "label": "식물생리·발달",
+      "topics": [
+        {
+          "id": "t_biology.plant.transport",
+          "label": "식물 구조·수송·영양",
+          "keywords": [
+            "물관",
+            "체관",
+            "기공",
+            "증산",
+            "뿌리",
+            "식물 호르몬",
+            "옥신",
+            "지베렐린",
+            "애브시스",
+            "앱시스",
+            "식물체"
+          ]
+        },
+        {
+          "id": "t_biology.plant.development",
+          "label": "생식·발생·분화",
+          "keywords": [
+            "발생",
+            "배아",
+            "배낭",
+            "중복 수정",
+            "중복수정",
+            "종자",
+            "꽃가루",
+            "배엽",
+            "낭배",
+            "형성체",
+            "분화",
+            "생식",
+            "화분"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_biology.ecology",
+      "subject": "t_biology",
+      "label": "생태·진화·다양성",
+      "topics": [
+        {
+          "id": "t_biology.ecology.population",
+          "label": "개체군·군집·생태계",
+          "keywords": [
+            "개체군",
+            "군집",
+            "생태계",
+            "먹이",
+            "생물량",
+            "생산성",
+            "경쟁",
+            "천이",
+            "상리",
+            "기생",
+            "생태적 지위"
+          ]
+        },
+        {
+          "id": "t_biology.ecology.evolution",
+          "label": "진화·집단유전·분류",
+          "keywords": [
+            "진화",
+            "자연 선택",
+            "자연선택",
+            "유전적 부동",
+            "유전적부동",
+            "하디",
+            "바인베르크",
+            "종분화",
+            "계통",
+            "분류군",
+            "대립 유전자 빈도",
+            "적응도"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_biology.other",
+      "subject": "t_biology",
+      "label": "기타·미분류",
+      "topics": [
+        {
+          "id": "t_biology.other.unclassified",
+          "label": "주제 미분류 문항",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "id": "t_earth.geology",
+      "subject": "t_earth",
+      "label": "지질학",
+      "topics": [
+        {
+          "id": "t_earth.geology.minerals",
+          "label": "광물·암석·지구화학",
+          "keywords": [
+            "광물",
+            "편광",
+            "박편",
+            "화성암",
+            "퇴적암",
+            "변성암",
+            "마그마",
+            "결정",
+            "광상",
+            "지구 화학",
+            "지구화학"
+          ]
+        },
+        {
+          "id": "t_earth.geology.structure",
+          "label": "구조지질·판구조·지구물리",
+          "keywords": [
+            "단층",
+            "습곡",
+            "주향",
+            "경사",
+            "판 구조",
+            "판구조",
+            "섭입",
+            "맨틀",
+            "지진파",
+            "중력 이상",
+            "지자기",
+            "탄성파"
+          ]
+        },
+        {
+          "id": "t_earth.geology.history",
+          "label": "지사·퇴적·고생물",
+          "keywords": [
+            "지층",
+            "부정합",
+            "퇴적 구조",
+            "퇴적구조",
+            "층서",
+            "화석",
+            "지질 시대",
+            "지질시대",
+            "방사성 연대",
+            "지사"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_earth.atmosphere",
+      "subject": "t_earth",
+      "label": "대기과학",
+      "topics": [
+        {
+          "id": "t_earth.atmosphere.thermo",
+          "label": "대기 열역학·구름·강수",
+          "keywords": [
+            "단열",
+            "포화",
+            "이슬점",
+            "상당 온위",
+            "온위",
+            "대기 안정",
+            "기온 감률",
+            "기온감률",
+            "구름",
+            "강수",
+            "수증기"
+          ]
+        },
+        {
+          "id": "t_earth.atmosphere.dynamics",
+          "label": "대기역학·기상 분석",
+          "keywords": [
+            "전향력",
+            "지균풍",
+            "경도풍",
+            "기압 경도",
+            "기압경도",
+            "소용돌이",
+            "와도",
+            "전선",
+            "일기도",
+            "저기압",
+            "태풍",
+            "풍속"
+          ]
+        },
+        {
+          "id": "t_earth.atmosphere.climate",
+          "label": "복사·기후·대기순환",
+          "keywords": [
+            "복사",
+            "알베도",
+            "온실",
+            "기후",
+            "엘니뇨",
+            "라니냐",
+            "대기 대순환",
+            "대기대순환",
+            "편서풍",
+            "몬순",
+            "제트류"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_earth.ocean",
+      "subject": "t_earth",
+      "label": "해양학",
+      "topics": [
+        {
+          "id": "t_earth.ocean.physical",
+          "label": "해수 성질·해류·파랑",
+          "keywords": [
+            "염분",
+            "해수",
+            "수온",
+            "해류",
+            "에크만",
+            "용승",
+            "심층 순환",
+            "파랑",
+            "쓰나미",
+            "지형류",
+            "조석",
+            "해양 순환"
+          ]
+        },
+        {
+          "id": "t_earth.ocean.environment",
+          "label": "해양 화학·생물·환경",
+          "keywords": [
+            "용존",
+            "영양 염류",
+            "영양염",
+            "해양 생물",
+            "해양생물",
+            "해양 산성",
+            "해양산성",
+            "해양 퇴적"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_earth.astronomy",
+      "subject": "t_earth",
+      "label": "천문학",
+      "topics": [
+        {
+          "id": "t_earth.astronomy.observation",
+          "label": "천구·좌표·관측",
+          "keywords": [
+            "적경",
+            "적위",
+            "방위각",
+            "고도",
+            "천구",
+            "항성시",
+            "태양시",
+            "일주 운동",
+            "일주운동",
+            "망원경",
+            "분해능",
+            "시차"
+          ]
+        },
+        {
+          "id": "t_earth.astronomy.solar",
+          "label": "태양계·천체역학",
+          "keywords": [
+            "행성",
+            "케플러",
+            "궤도",
+            "태양계",
+            "공전",
+            "자전",
+            "달의",
+            "위상",
+            "소행성",
+            "조석력"
+          ]
+        },
+        {
+          "id": "t_earth.astronomy.stars",
+          "label": "항성·별의 진화",
+          "keywords": [
+            "항성",
+            "광도",
+            "등급",
+            "스펙트럼",
+            "흑체",
+            "H-R",
+            "H－R",
+            "주계열",
+            "백색 왜성",
+            "백색왜성",
+            "적색 거성",
+            "쌍성",
+            "질량 광도"
+          ]
+        },
+        {
+          "id": "t_earth.astronomy.universe",
+          "label": "은하·우주론",
+          "keywords": [
+            "은하",
+            "허블",
+            "적색 편이",
+            "적색편이",
+            "우주",
+            "암흑",
+            "대폭발",
+            "빅뱅",
+            "우주 배경",
+            "우주배경"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_earth.other",
+      "subject": "t_earth",
+      "label": "기타·미분류",
+      "topics": [
+        {
+          "id": "t_earth.other.unclassified",
+          "label": "주제 미분류 문항",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "id": "pedagogy.philosophy",
+      "subject": "pedagogy",
+      "label": "과학철학·과학사·과학의 본성",
+      "topics": [
+        {
+          "id": "pedagogy.philosophy.philosophy",
+          "label": "귀납·반증·과학혁명",
+          "keywords": [
+            "귀납",
+            "연역",
+            "가설 연역",
+            "반증",
+            "포퍼",
+            "쿤",
+            "라카토",
+            "패러다임",
+            "연구 프로그램",
+            "관찰의 이론"
+          ]
+        },
+        {
+          "id": "pedagogy.philosophy.nature",
+          "label": "과학의 본성·과학사",
+          "keywords": [
+            "과학의 본성",
+            "과학 지식의",
+            "과학사",
+            "잠정성",
+            "경험적",
+            "창의성",
+            "과학적 소양",
+            "과학자의"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pedagogy.learning",
+      "subject": "pedagogy",
+      "label": "학습이론·개념학습",
+      "topics": [
+        {
+          "id": "pedagogy.learning.theory",
+          "label": "인지·구성주의·사회적 학습",
+          "keywords": [
+            "피아제",
+            "오수벨",
+            "브루너",
+            "비고츠키",
+            "가네",
+            "구성주의",
+            "인지 발달",
+            "인지발달",
+            "유의미",
+            "근접 발달",
+            "근접발달",
+            "발판"
+          ]
+        },
+        {
+          "id": "pedagogy.learning.concept",
+          "label": "오개념·개념변화",
+          "keywords": [
+            "오개념",
+            "선개념",
+            "대안 개념",
+            "대안개념",
+            "개념 변화",
+            "개념변화",
+            "인지 갈등",
+            "인지갈등",
+            "포스너",
+            "개념 생태"
+          ]
+        },
+        {
+          "id": "pedagogy.learning.motivation",
+          "label": "동기·메타인지·자기조절",
+          "keywords": [
+            "동기",
+            "자기 효능",
+            "자기효능",
+            "메타인지",
+            "상위 인지",
+            "상위인지",
+            "자기 조절",
+            "자기조절",
+            "자기 주도"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pedagogy.teaching",
+      "subject": "pedagogy",
+      "label": "교수학습 모형·수업 설계",
+      "topics": [
+        {
+          "id": "pedagogy.teaching.models",
+          "label": "순환학습·탐구·발견·POE",
+          "keywords": [
+            "순환 학습",
+            "순환학습",
+            "5E",
+            "발견 학습",
+            "발견학습",
+            "탐구 학습",
+            "탐구학습",
+            "POE",
+            "발생 학습",
+            "발생학습",
+            "개념 변화 학습",
+            "개념변화학습"
+          ]
+        },
+        {
+          "id": "pedagogy.teaching.strategies",
+          "label": "발문·논의·협동·비유·모형",
+          "keywords": [
+            "발문",
+            "논의",
+            "논증",
+            "토론",
+            "협동",
+            "협력",
+            "비유",
+            "역할 놀이",
+            "역할놀이",
+            "모형 기반",
+            "모형기반",
+            "모델링",
+            "학생 중심"
+          ]
+        },
+        {
+          "id": "pedagogy.teaching.curriculum",
+          "label": "교육과정·성취기준·융합",
+          "keywords": [
+            "교육과정",
+            "성취기준",
+            "핵심 역량",
+            "핵심역량",
+            "STS",
+            "STEAM",
+            "융합",
+            "SSI",
+            "과학 기술 사회",
+            "과학기술사회",
+            "사회적 쟁점"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pedagogy.inquiry",
+      "subject": "pedagogy",
+      "label": "과학 탐구·실험 지도",
+      "topics": [
+        {
+          "id": "pedagogy.inquiry.process",
+          "label": "탐구 과정·변인·자료 해석",
+          "keywords": [
+            "탐구 과정",
+            "탐구과정",
+            "변인",
+            "가설 설정",
+            "가설설정",
+            "조작적 정의",
+            "조작적정의",
+            "자료 해석",
+            "자료해석",
+            "실험 설계",
+            "실험설계",
+            "결론 도출"
+          ]
+        },
+        {
+          "id": "pedagogy.inquiry.practice",
+          "label": "실험 안전·교구·디지털 탐구",
+          "keywords": [
+            "실험 안전",
+            "실험안전",
+            "실험실",
+            "실험 기구",
+            "실험기구",
+            "MBL",
+            "스마트 기기",
+            "스마트기기",
+            "센서",
+            "디지털",
+            "컴퓨터 활용"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pedagogy.assessment",
+      "subject": "pedagogy",
+      "label": "과학교육 평가",
+      "topics": [
+        {
+          "id": "pedagogy.assessment.methods",
+          "label": "진단·형성·총괄·수행평가",
+          "keywords": [
+            "진단 평가",
+            "진단평가",
+            "형성 평가",
+            "형성평가",
+            "총괄 평가",
+            "총괄평가",
+            "수행 평가",
+            "수행평가",
+            "루브릭",
+            "포트폴리오",
+            "평가 기준"
+          ]
+        },
+        {
+          "id": "pedagogy.assessment.quality",
+          "label": "평가 문항·타당도·신뢰도",
+          "keywords": [
+            "타당도",
+            "신뢰도",
+            "변별도",
+            "난이도",
+            "채점",
+            "문항 분석",
+            "문항분석",
+            "평가 도구",
+            "평가도구",
+            "이원 목적",
+            "이원목적",
+            "서술형",
+            "선다형"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pedagogy.other",
+      "subject": "pedagogy",
+      "label": "기타·미분류",
+      "topics": [
+        {
+          "id": "pedagogy.other.unclassified",
+          "label": "주제 미분류 문항",
+          "keywords": []
+        }
+      ]
+    }
+  ]
+}

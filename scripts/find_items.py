@@ -16,7 +16,11 @@ ap.add_argument("--not", dest="nots", default="", help="들어 있으면 표시(
 ap.add_argument("--subj", default="", help="과목 코드(쉼표로)")
 ap.add_argument("--years", default="", help="학년도 범위, 예: 2017-2027")
 ap.add_argument("--out", default="")
+ap.add_argument("--source", choices=["kice", "imyong"], default="kice")
+ap.add_argument("--domain", choices=["", "pedagogy", "content"], default="")
+ap.add_argument("--points", type=float, choices=[2,4])
 a = ap.parse_args()
+if a.source == "imyong": DATA = os.path.join(os.path.dirname(DATA), "imyong-questions.json.gz")
 sp = lambda s: ["".join(w.split()) for w in s.split(",") if w.strip()]
 anys, alls, nots, subj = sp(a.any), sp(a.all), sp(a.nots), [x.strip() for x in a.subj.split(",") if x.strip()]
 y0, y1 = (int(x) for x in a.years.split("-")) if a.years else (0, 9999)
@@ -26,6 +30,8 @@ for q in items:
     raw = q.get("text") or ""
     t = "".join(raw.split())   # PDF에서 뽑은 글은 띄어쓰기가 들쭉날쭉하므로 공백을 지우고 비교
     if subj and q.get("subject") not in subj: continue
+    if a.domain and q.get("domain") != a.domain: continue
+    if a.points and q.get("points") != a.points: continue
     if not (y0 <= (q.get("year") or 0) <= y1): continue
     if anys and not any(w in t for w in anys): continue
     if alls and not all(w in t for w in alls): continue
