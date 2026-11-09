@@ -1,116 +1,132 @@
-# 5E_print
+<p align="center">
+  <img src="docs/assets/banner.svg" alt="5E_print — 고른 범위를, 한 권의 교재로." width="100%">
+</p>
 
-설문에 답하고 나온 프롬프트를 AI(Claude Code 또는 Codex)에게 붙여 넣으면, **시험지 세트나 학습지가 처음부터 끝까지 한 번에** 만들어지는 스킬입니다. 다 만든 뒤에는 원본과 조판된 쪽을 나란히 보는 **편집기**로 고칩니다.
+<h1 align="center">5E_print</h1>
 
-- 설문: **https://www.5e.ai.kr/print/**
-- 만든 사람: 서울특별시교육청 박승연
+<p align="center">
+  교과서와 기출로 만드는 시험지·학습지·임용 학습교재.<br>
+  <b>범위를 고르고, 제작 요청을 복사하고, AI와 한 권을 완성하세요.</b>
+</p>
 
-## 무엇이 나오나
+<p align="center">
+  <a href="https://github.com/seungyeon980808-pixel/print/tags"><img src="https://img.shields.io/github/v/tag/seungyeon980808-pixel/print?label=version&color=514fbd&style=flat-square" alt="최신 버전 태그"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-MIT-414c50?style=flat-square" alt="코드 라이선스 MIT"></a>
+  <img src="https://img.shields.io/badge/output-PDF_%2B_XLSX-414c50?style=flat-square" alt="PDF와 문항표 엑셀">
+</p>
 
-**시험지** (학교 정기고사형, 평가원 양식 흑백 2단 · 쪽당 4문항)
+<p align="center">
+  <a href="https://www.5e.ai.kr/print/"><b>시험지·학습지 만들기 ↗</b></a> ·
+  <a href="https://www.5e.ai.kr/print/?source=imyong"><b>임용 교재 만들기 ↗</b></a> ·
+  <a href="https://www.5e.ai.kr/examlibrary/?view=study&amp;group=imyong">기출 학습 모드 ↗</a>
+</p>
 
+---
+
+## 어떤 자료를 만들 수 있나요
+
+| 만들 것 | 구성 | 제작 방식 |
+| --- | --- | --- |
+| **학교 시험지** | 학생용 시험지·해설·검토 용지·문항표 엑셀 | 기출·교과서 등을 변형해 평가원식 흑백 2단으로 조판 |
+| **학습지·교재** | 표지·개념·문항·정답과 해설, 문항표 | 고른 성취기준과 참고자료로 Typst 원본 작성 |
+| **임용 기출 학습교재** | 배점별 문제편·긴 문항 원문 확대본·JSON 문항표 | 원문 PDF의 수식·그림·글자를 벡터로 재사용 |
+
+설문은 **제작 요청과 설정을 만드는 화면**입니다. 요청을 컴퓨터의 자료 폴더에 접근할 수 있는 AI 코딩 도구에 전달하면 이 저장소의 스킬과 스크립트로 제작합니다. 설문 서버에서 맞춤 PDF를 즉시 생성하지는 않습니다.
+
+## 세 단계로 시작하기
+
+1. **범위 고르기** — [설문](https://www.5e.ai.kr/print/)에서 시험지·학습지를, [임용 화면](https://www.5e.ai.kr/print/?source=imyong)에서 과학 임용 범위를 고릅니다.
+2. **제작 요청 복사하기** — 과목·단원·문항 조건을 정한 뒤 마지막 화면의 제작 요청을 복사합니다.
+3. **AI에게 전달하기** — Claude Code 또는 Codex에서 자료 폴더를 열고 붙여 넣습니다. AI가 [SKILL.md](SKILL.md)에 따라 자료를 읽고 원본·PDF·문항표를 만듭니다.
+
+일반 웹 채팅만으로는 로컬 파일 읽기와 조판 프로그램 실행을 대신할 수 없습니다. 원문·해설과 최종 PDF는 사용 전에 확인하세요. [자료 폴더 준비와 편집기 사용법 →](docs/USAGE.md)
+
+## 임용은 세부 주제까지
+
+물리·화학·생물·지구과학과 과학교육론을 지원합니다. **30개 단원·72개 세부 주제**를 여러 개 고르고 본문 단어로 더 좁힐 수 있습니다.
+
+| 옵션 | 고를 수 있는 것 |
+| --- | --- |
+| 범위 | 과목·전공 내용/과학교육론·학년도·전공 A/B·2점/4점 |
+| 주제 | 단원·세부 주제 복수 선택, 본문 검색과 제외 단어 |
+| 문항 구성 | 최대 문항 수, 최신순·오래된순·주제순·고정 번호 무작위 |
+| 지면 | A3 가로·B4/A4 세로, 빈칸·줄·모눈 여백, 교재 제목 |
+| 해설 요청 | 문제편만·해설·해설과 필요한 개념 정리 |
+
+주제는 원문 용어에 따른 학습용 자동 분류입니다. 여러 주제는 OR, 범위·검색 조건 사이는 AND이며 같은 문항은 중복 수록하지 않습니다. 같은 데이터·조건·무작위 번호로 문항과 순서를 재현할 수 있습니다.
+
+<p align="center">
+  <a href="https://www.5e.ai.kr/print/?source=imyong"><img src="docs/assets/workbook.png" alt="임용 학습교재 제작 화면에서 양자역학 세부 주제와 문항 수를 선택한 실제 화면" width="100%"></a><br>
+  <sub>실제 공개 서비스의 임용 범위 설정 · 2026-11-10 촬영</sub>
+</p>
+
+### 완성 문제편 받기
+
+[임용 교재 화면의 ‘완성 교재 바로 받기’](https://www.5e.ai.kr/print/?source=imyong)에서 **2017–2026학년도** 문제편 5종, 원문 확대본과 문항표 엑셀을 받습니다.
+
+- 권장 지면은 **A3 가로**, 배치는 **2점 4문항/쪽·4점 2문항/쪽**입니다.
+- 네 과목의 중복 없는 문항은 **867개**입니다. 과학교육론 모음은 네 과목 교재에 포함된 215문항을 다시 모았습니다.
+- 긴 문항은 본책 배치를 유지하면서 원문 확대본을 함께 제공합니다.
+- **현재 공개 PDF에는 정답·해설·개념 정리가 없습니다.** 화면의 해당 옵션은 별도 작성·대조를 요청하는 값입니다. 원문 합성 CLI가 해설을 생성하지는 않습니다.
+
+맞춤 설정·CLI·파일 구성은 [임용 교재 안내](docs/IMYONG.md)에 있습니다.
+
+## 직접 실행하기
+
+```bash
+git clone https://github.com/seungyeon980808-pixel/print.git
+cd print
+python3 scripts/check_env.py
 ```
-결과/날짜_과목_시험지_v1.pdf            문항(시험지)
-결과/날짜_과목_시험지_v1_해설.pdf       정답표 · 문항마다 정답·성취기준·난이도·출처 · ㄱㄴㄷ 해설
-결과/날짜_과목_시험지_v1_검토용지.pdf   한 문항 한 쪽: 참고 원문 | 변형 문항, 변형 근거 | 해설, 체크리스트 | 메모
-결과/날짜_과목_시험지_v1_문항표.xlsx    문항마다 한 줄 + 조건별 개수
+
+학교 시험지·학습지는 Typst, Python 3, PyMuPDF·openpyxl과 본문 글꼴을 사용합니다. 환경 점검 결과를 확인하고 필요하면 `python3 scripts/check_env.py --install`로 준비합니다. [설치·개발 안내 →](docs/DEVELOPMENT.md)
+
+임용 원문 문제편은 Typst 없이 PyMuPDF로 합성합니다.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+python3 -m pip install -r requirements-imyong.txt
+python3 scripts/build_imyong_book.py \
+  --subject t_physics --year-from 2017 --year-to 2026 \
+  --paper A3 --output /path/to/materials/물리_임용학습지_v1.pdf \
+  --cache /path/to/work/pdf-cache
 ```
 
-- 기출을 그대로 내지 않고 기출·교과서·참고서·기타 자료를 **변형**합니다(비율과 변형 정도 하·중·상은 설문에서 고름).
-- 그림은 새로 그리지 않고 **원본(기출 시험지, 교과서·참고서 PDF)에서 잘라 재활용**합니다.
-- 학교 이름·시험 이름·교시는 `brand.typ`, 성취기준은 `성취기준.typ`에서 바뀝니다.
-
-**학습지·교재**: 앞표지 → 파트마다 개념편 · 문항편 · 정답·해설 → 뒤표지. 완성 예시 「별과 우주」(중2 과학, 42쪽) → [`examples/별과우주/출력/별과우주_전체.pdf`](examples/별과우주/출력/별과우주_전체.pdf)
-
-## 쓰는 법
-
-1. **자료 폴더 준비**: 수업 때 쓰던 자료(교과서·참고서 PDF, 학습지, 기출 등)를 한 폴더에 넣습니다. 비어 있어도 됩니다.
-2. **설문**: https://www.5e.ai.kr/print/ 에서 폴더를 연결하고, 「추천대로(약 1분)」 또는 「자세히(약 10분)」로 답합니다. 과목·성취기준은 2022 개정 교육과정입니다.
-3. **프롬프트 복사**: 마지막 화면에서 컴퓨터(윈도우·맥)와 AI(Claude·GPT)를 고르면 맞는 프롬프트가 나옵니다.
-4. **AI에게 붙여 넣기**: Claude 앱의 Code 탭(또는 Codex)에서 **그 자료 폴더를 열고** 붙여 넣습니다. AI가 이 스킬을 받아 준비물을 설치하고, 중간에 멈추지 않고 끝까지 만든 뒤 한 번 보고합니다.
-   - claude.ai · ChatGPT 웹 채팅 창에서는 안 됩니다(내 컴퓨터의 폴더를 읽고 조판 프로그램을 실행해야 해서).
-5. **편집기**: 자료 폴더에 생긴 「편집기 열기」(맥 `.command`, 윈도우 `.bat`)를 두 번 누릅니다.
-
-만들어진 폴더:
-
-```
-자료 폴더/
-  참고자료/   내가 넣은 자료(그대로 둠)
-  작업/       원본(Typst) · 잘라 온 그림 · 브리프 · 확인용 그림
-  결과/       PDF · 엑셀 (고칠 때마다 v2, v3 … 새 파일, 이전 판은 남김)
-  편집기 열기.command / .bat
-```
-
-## 편집기
-
-```
-┌ 원본(Typst) ───────────────┬ 조판된 쪽 ──────────────┐
-│ #let questions = (          │  01  다음은 …           │
-│   (tag: "변형", …           │  ① ㄱ  ② ㄴ  ③ ㄱ, ㄷ  │
-└─────────────────────────────┴─────────────────────────┘
-```
-
-- 왼쪽을 고치면 오른쪽이 바로 다시 조판됩니다.
-- 오른쪽 문항을 누르면 왼쪽 원본이 그 문항 첫 줄로 올라오고, **두 번 누르면** 지문·자료·발문·보기·선지가 색으로 나뉩니다.
-- **⌘(윈도우는 Ctrl) + 누르기**: 그 문항을 AI(Claude·GPT)에게 검토·수정 부탁 → 바뀔 곳을 보여 주고 「적용」(고치기 전 사본은 `.backup/`).
-- **PDF 저장 · 엑셀 저장**: 판을 하나 올려 `결과/`에 새로 저장합니다.
+공개 원본을 받아 SHA-256을 확인한 뒤 문제편·확대본(해당 시)·JSON 문항표를 만듭니다. 로컬 원본은 `--source-root /path/to/shared-folder`로 지정합니다. 완성 자료와 개발용 캐시의 저장 위치를 구분하고, 기존 판을 덮어쓰지 마세요.
 
 ## 저장소 구성
 
-```
-SKILL.md              AI가 읽는 작업 순서·규칙 (Claude)
-AGENTS.md             Codex용 안내(SKILL.md를 읽으라는 것)
-templates/            서식: exam/(시험지 세트) · brand.typ(책마다 바뀌는 값) · drill.typ(문항편) · concept.typ(개념편)
-                      · cover.typ(표지) · 표지그림.typ · part/(파트 뼈대)
-scripts/
-  check_env.py        준비물 점검·설치
-  new_book.py         새 책 원본 폴더 만들기
-  build.py            PDF 뽑기(한 권 · 파트별 · 확인용 그림)
-  find_items.py       평가원 기출 19,760문항 글 검색
-  find_standards.py   2022 개정 교육과정 성취기준·원문 검색
-  get_figure.py       기출 문항을 원본 시험지에서 고해상도 그림으로
-  crop_figure.py      교과서·참고서 PDF 쪽에서 그림 잘라 오기
-  exam_new.py         시험지 세트 폴더 만들기
-  exam_build.py       시험지·해설·검토 용지 PDF + 문항표 엑셀
-  make_launcher.py    「편집기 열기」 만들기
-  editor/             편집기(serve.py + index.html)
-data/                 기출 글 색인(exam-search에서 묶음) · 시험지 경로표 · 교육과정 성취기준
-fonts/                Pretendard(SIL OFL)
-survey/               설문 페이지
-examples/별과우주/    완성 예시: 원본/ · 출력/ · 문항배정표.md
+```text
+SKILL.md · AGENTS.md          AI가 읽는 제작 규칙과 진입 안내
+survey/                      설문 화면과 임용 패널 원본
+scripts/                     환경 점검·검색·조판·임용 원문 합성
+scripts/editor/              Typst 원본과 PDF를 나란히 보는 편집기
+templates/                   시험지·개념편·문항편·표지 서식
+data/                        기출 색인·성취기준·임용 주제와 출처
+downloads/                   릴리스에 고정한 문항표 배포 사본
+examples/별과우주/           중2 과학 완성 예시와 원본
+fonts/                       Pretendard와 글꼴 라이선스
+docs/                        사용·임용·개발 안내
 ```
 
-## 준비물
+| 문서 | 내용 |
+| --- | --- |
+| [사용 안내](docs/USAGE.md) | 자료 폴더, 산출물, 학교 시험지·학습지 편집기 |
+| [임용 교재 안내](docs/IMYONG.md) | 범위 옵션, 설정 JSON, 원문 합성, 해설 제공 범위 |
+| [개발과 게시](docs/DEVELOPMENT.md) | 환경·검사·설문 재생성·5E Print Route |
+| [기여 안내](CONTRIBUTING.md) | 오류 제보와 변경 시 확인 항목 |
+| [저장소 구성과 버전](https://github.com/seungyeon980808-pixel/exam-search/blob/main/docs/REPOSITORIES.md) | 5E·기출 탐색기·print의 역할과 버전 관리 |
+| [제작 규칙](SKILL.md) · [변경 내역](CHANGELOG.md) | AI 작업 절차와 릴리스 기록 |
 
-`python3 scripts/check_env.py`가 점검하고, `--install`을 붙이면 빠진 것을 설치합니다. AI가 알아서 실행합니다.
+완성 예시: [별과 우주 · 42쪽 PDF](examples/별과우주/출력/별과우주_전체.pdf)
 
-- [Typst](https://typst.app) 0.13 이상 — 맥 `brew install typst`, 윈도우 `winget install --id Typst.Typst -e`
-- Python 3 + `pymupdf` · `openpyxl` — PDF 읽기·자르기, 엑셀
-- 본문 글꼴 KoPub 바탕(무료) — 맥 `brew install --cask font-ko-pub-batang`. 없으면 Noto Serif KR, 윈도우 기본 「바탕」 순으로 대신합니다. 제목 글꼴 Pretendard는 저장소에 들어 있습니다.
+## 문제 제보
 
-## 교과서 PDF 없이도
+[GitHub Issues](https://github.com/seungyeon980808-pixel/print/issues)에 사용한 제작 화면, 운영체제, 실행 명령, 오류와 기대한 결과를 남겨 주세요. 임용은 개인정보를 뺀 설정 JSON과 문항 ID를 함께 적으면 범위를 재현할 수 있습니다. 실제 Windows 제작 전 과정은 아직 검증하지 않았습니다.
 
-단원만 적으면 교과서 PDF 없이 **평가원 기출 + 2022 개정 교육과정 성취기준**으로 만듭니다. 파트는 성취기준 단위로 나누고, 문항마다 성취기준 코드를 맞춥니다. 교과서 PDF를 넣으면 교과서 순서·용어·쪽수와 교과서 변형 문항이 더해집니다.
+## 라이선스와 출처
 
-- 성취기준: `scripts/find_standards.py` — 중학교 · 고등학교 보통교과 3,838개와 공식 원문([korean-secondary-learning-map-mcp](https://github.com/raphysicst-create/korean-secondary-learning-map-mcp)에서 묶음, 출처는 [data/CURRICULUM-NOTICE.md](data/CURRICULUM-NOTICE.md)). 2026-1호 개정분은 아직 반영되지 않았습니다.
-- 교육과정 MCP를 이미 연결해 쓰고 있다면 AI가 학습 주제·선수 관계까지 함께 봅니다(없어도 됩니다).
+코드·서식은 [MIT](LICENSE), Pretendard는 [SIL OFL](fonts/OFL.txt)입니다. 문항·교과서·원본 이미지의 권리는 각 원저작자에게 있습니다. [교육과정 출처와 반영 범위](data/CURRICULUM-NOTICE.md)도 확인하세요. 코드 라이선스가 원자료의 이용 권리를 대신하지 않습니다.
 
-## 기출 데이터
-
-- 문항 글 색인은 [exam-search](https://github.com/seungyeon980808-pixel/exam-search)의 `data/questions.json`을 줄여 묶은 것입니다(평가원 수능·6월·9월 모의평가 2007–2027학년도, 과탐·사탐·국어·영어·수학).
-- PDF에서 뽑은 글이라 일부 문항(약 5%)은 글자를 못 읽어 검색에 안 잡힙니다. 꼭 넣을 문항은 설문의 「꼭 넣을 문항」에 번호로 적어 주세요.
-- 그림은 5E 공개 게이트웨이에서 원본 시험지 PDF를 받아 300dpi로 자릅니다.
-
-## 한계
-
-- 문항·개념 글은 AI가 쓰므로 검토 용지나 편집기로 꼭 확인하세요. 맞는 원본 그림이 없으면 그림 없이 만들거나 다른 원본으로 바꿉니다.
-- 학습지 형식은 아직 다듬는 중입니다.
-- 「자세히」에서 고른 용지·글자 크기·색·글꼴·정답 위치 같은 학습지 선택은 서식에 바로 들어갑니다. 쪽당 문항은 4개입니다.
-- 결과는 PDF와 엑셀입니다(한글 HWP 아님).
-- 윈도우와 Codex에서는 아직 직접 끝까지 시험하지 못했습니다. 막히면 알려 주세요.
-
-## 라이선스
-
-- 코드·서식: MIT ([LICENSE](LICENSE))
-- Pretendard: SIL Open Font License ([fonts/OFL.txt](fonts/OFL.txt))
-- 문항 저작권은 각 출처(한국교육과정평가원, 교과서 발행사)에 있습니다. 예시 교재의 교과서 변형 문항은 수업용으로 만든 것입니다.
+개발 박승연 · 서울특별시교육청

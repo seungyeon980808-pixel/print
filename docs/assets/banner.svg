@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">5E_print</title>
+  <desc id="desc">고른 범위를, 한 권의 교재로. 범위 선택에서 인쇄용 PDF까지.</desc>
+  <rect width="1280" height="360" rx="16" fill="#f0f0f8"/>
+  <path d="M48 48h36" stroke="#514fbd" stroke-width="5"/>
+  <g font-family="Pretendard, Apple SD Gothic Neo, Malgun Gothic, sans-serif">
+    <text x="48" y="92" fill="#514fbd" font-size="17" font-weight="700" letter-spacing="3">5E / PRINT</text>
+    <text x="48" y="169" fill="#29284e" font-size="52" font-weight="700">고른 범위를, 한 권의 교재로.</text>
+    <text x="50" y="216" fill="#62617a" font-size="21">시험지 · 학습지 · 과학 임용</text>
+    <text x="50" y="302" fill="#62617a" font-size="16">SCOPE  /  COMPOSE  /  PRINT</text>
+    <g transform="translate(890 44)">
+      <rect x="15" y="13" width="264" height="278" rx="8" fill="#d9d9ef"/>
+      <rect width="264" height="278" rx="8" fill="#fff" stroke="#c7c6e3"/>
+      <text x="24" y="40" fill="#514fbd" font-size="14" font-weight="700">STUDY WORKBOOK</text>
+      <path d="M24 58h216M132 77v162M24 158h216" stroke="#d7d6e9"/>
+      <g stroke="#cbcbdc" stroke-width="4">
+        <path d="M24 85h85M24 102h72M24 119h85M24 136h60M153 85h86M153 102h72M153 119h86M153 136h60"/>
+        <path d="M24 181h85M24 198h72M24 215h85M24 232h60M153 181h86M153 198h72M153 215h86M153 232h60"/>
+      </g>
+      <text x="121" y="262" fill="#62617a" font-size="13">01</text>
+    </g>
+  </g>
+</svg>
